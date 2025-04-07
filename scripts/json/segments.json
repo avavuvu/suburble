@@ -1,0 +1,238 @@
+[
+    {
+        "segment": "Clifton Hill Loop (Southern Cross) - Clifton Hill Loop (Parliament)",
+        "lines": [
+            "Sunbury",
+            "Craigieburn",
+            "Upfield",
+            "Lilydale",
+            "Belgrave",
+            "Glen Waverely",
+            "Alamein"
+        ]
+    },
+    {
+        "segment": "Southern Cross - Flinders Street",
+        "lines": [
+            "Alamein",
+            "Glen Waverely",
+            "Belgrave",
+            "Lilydale",
+            "Upfield",
+            "Craigieburn",
+            "Frankston",
+            "Williamstone",
+            "Werribee",
+            "Sunbury",
+            "Hurstbridge",
+            "Mernda"
+        ]
+    },
+    {
+        "segment": "Dandenong - Pakenham",
+        "lines": [
+            "Pakenham"
+        ]
+    },
+    {
+        "segment": "Ringwood - Belgrave",
+        "lines": [
+            "Belgrave"
+        ]
+    },
+    {
+        "segment": "Caulfield - Frankston",
+        "lines": [
+            "Frankston"
+        ]
+    },
+    {
+        "segment": "Laverton - Werribee",
+        "lines": [
+            "Werribee"
+        ]
+    },
+    {
+        "segment": "East Camberwell - Ringwood",
+        "lines": [
+            "Lilydale",
+            "Belgrave"
+        ]
+    },
+    {
+        "segment": "Caulfield - Dandenong",
+        "lines": [
+            "Cranbourne",
+            "Pakenham"
+        ]
+    },
+    {
+        "segment": "Burnley - Glen Waverley",
+        "lines": [
+            "Glen Waverely"
+        ]
+    },
+    {
+        "segment": "Burnley - East Camberwell",
+        "lines": [
+            "Belgrave",
+            "Lilydale",
+            "Alamein"
+        ]
+    },
+    {
+        "segment": "South Yarra - Sandringham",
+        "lines": [
+            "Sandringham"
+        ]
+    },
+    {
+        "segment": "Footscray - Sunshine",
+        "lines": [
+            "Sunbury"
+        ]
+    },
+    {
+        "segment": "South Yarra - Caulfield",
+        "lines": [
+            "Cranbourne",
+            "Pakenham",
+            "Frankston"
+        ]
+    },
+    {
+        "segment": "Richmond - South Yarra",
+        "lines": [
+            "Frankston",
+            "Cranbourne",
+            "Pakenham",
+            "Sandringham"
+        ]
+    },
+    {
+        "segment": "Richmond - Burnley",
+        "lines": [
+            "Lilydale",
+            "Belgrave",
+            "Glen Waverely",
+            "Alamein"
+        ]
+    },
+    {
+        "segment": "East Camberwell - Alamein",
+        "lines": [
+            "Alamein"
+        ]
+    },
+    {
+        "segment": "Dandenong - Cranbourne",
+        "lines": [
+            "Cranbourne"
+        ]
+    },
+    {
+        "segment": "Southern Cross - North Melbourne",
+        "lines": [
+            "Craigieburn",
+            "Upfield",
+            "Werribee",
+            "Williamstone",
+            "Sunbury"
+        ]
+    },
+    {
+        "segment": "Sunshine - Albion",
+        "lines": [
+            "Sunbury"
+        ]
+    },
+    {
+        "segment": "Flinders Street - Clifton Hill",
+        "lines": [
+            "Mernda",
+            "Hurstbridge"
+        ]
+    },
+    {
+        "segment": "Ringwood - Lilydale",
+        "lines": [
+            "Lilydale"
+        ]
+    },
+    {
+        "segment": "Clifton Hill - Hurstbridge",
+        "lines": [
+            "Hurstbridge"
+        ]
+    },
+    {
+        "segment": "Clifton Hill - Mernda",
+        "lines": [
+            "Mernda"
+        ]
+    },
+    {
+        "segment": "Start Altona Loop - Laverton",
+        "lines": [
+            "Werribee"
+        ]
+    },
+    {
+        "segment": "North Melbourne - Upfield",
+        "lines": [
+            "Upfield"
+        ]
+    },
+    {
+        "segment": "Footscray - Newport",
+        "lines": [
+            "Werribee",
+            "Williamstone"
+        ]
+    },
+    {
+        "segment": "Sydenham - Castlemaine",
+        "lines": [
+            "Sunbury"
+        ]
+    },
+    {
+        "segment": "Newmarket - Broadmeadows",
+        "lines": [
+            "Craigieburn"
+        ]
+    },
+    {
+        "segment": "Kensington - Newmarket",
+        "lines": [
+            "Craigieburn"
+        ]
+    },
+    {
+        "segment": "South Kensington - Footscray",
+        "lines": [
+            "Williamstone",
+            "Werribee",
+            "Sunbury"
+        ]
+    },
+    {
+        "segment": "Start Altona Loop - Laverton (via Altona Loop)",
+        "lines": [
+            "Werribee"
+        ]
+    },
+    {
+        "segment": "Newport - Brooklyn",
+        "lines": [
+            "Williamstone",
+            "Werribee"
+        ]
+    },
+    {
+        "segment": "Newport - Williamstown",
+        "lines": [
+            "Williamstone"
+        ]
+    }
+]

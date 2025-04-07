@@ -1,0 +1,8 @@
+[out:json];
+
+// First, find train lines (railways)
+way["railway"="rail"]["electrified"="contact_line"]({{bbox}})->.trains;
+
+relation(around.trains:2500)["ref:psma:loc_pid"];
+
+out geom;
