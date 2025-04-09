@@ -10,16 +10,7 @@
 
     let popupLngLat: MapLibreGl.LngLatLike = $state([144.96370394518178, -37.80899353983027])
 
-    const trainLines = [
-        "Mernda", "Hurstbridge",
-        "Sunbury", "Craigieburn", "Upfield",
-        "Lilydale","Belgrave","Glen Waverely","Alamein",
-        "Pakenham","Cranbourne",
-        "Sandringham",
-        "Frankston","Williamstone","Werribee",
-    ] as const
 
-    type TrainLine = typeof trainLines[number];
 
     const trainLineMap = new SvelteMap<string, TrainLine[]>(
         trainSegments.map(({name}) => [name, []])
