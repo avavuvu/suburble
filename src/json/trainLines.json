@@ -569,7 +569,8 @@
                 ]
             ]
         ],
-        "type": "MultiLineString"
+        "type": "MultiLineString",
+        "color": "#152C6B"
     },
     {
         "name": "Belgrave",
@@ -1111,7 +1112,8 @@
                 -37.8184263
             ]
         ],
-        "type": "LineString"
+        "type": "LineString",
+        "color": "#152C6B"
     },
     {
         "name": "Alamein",
@@ -1463,7 +1465,8 @@
                 ]
             ]
         ],
-        "type": "MultiLineString"
+        "type": "MultiLineString",
+        "color": "#152C6B"
     },
     {
         "name": "Lilydale",
@@ -2165,7 +2168,8 @@
                 ]
             ]
         ],
-        "type": "MultiLineString"
+        "type": "MultiLineString",
+        "color": "#152C6B"
     },
     {
         "name": "Cranbourne",
@@ -2823,7 +2827,8 @@
                 ]
             ]
         ],
-        "type": "MultiLineString"
+        "type": "MultiLineString",
+        "color": "#279FD5"
     },
     {
         "name": "Frankston",
@@ -3945,7 +3950,8 @@
                 ]
             ]
         ],
-        "type": "MultiLineString"
+        "type": "MultiLineString",
+        "color": "#028430"
     },
     {
         "name": "Frankston",
@@ -5163,7 +5169,8 @@
                 ]
             ]
         ],
-        "type": "MultiLineString"
+        "type": "MultiLineString",
+        "color": "#028430"
     },
     {
         "name": "Werribee",
@@ -5561,7 +5568,8 @@
                 ]
             ]
         ],
-        "type": "MultiLineString"
+        "type": "MultiLineString",
+        "color": "#028430"
     },
     {
         "name": "Frankston",
@@ -6871,7 +6879,8 @@
                 ]
             ]
         ],
-        "type": "MultiLineString"
+        "type": "MultiLineString",
+        "color": "#028430"
     },
     {
         "name": "Pakenham",
@@ -7719,7 +7728,8 @@
                 ]
             ]
         ],
-        "type": "MultiLineString"
+        "type": "MultiLineString",
+        "color": "#279FD5"
     },
     {
         "name": "Sandringham",
@@ -8207,7 +8217,8 @@
                 ]
             ]
         ],
-        "type": "MultiLineString"
+        "type": "MultiLineString",
+        "color": "#F178AF"
     },
     {
         "name": "Mernda",
@@ -8529,7 +8540,8 @@
                 ]
             ]
         ],
-        "type": "MultiLineString"
+        "type": "MultiLineString",
+        "color": "#BE1014"
     },
     {
         "name": "Hurstbridge",
@@ -9507,7 +9519,8 @@
                 ]
             ]
         ],
-        "type": "MultiLineString"
+        "type": "MultiLineString",
+        "color": "#BE1014"
     },
     {
         "name": "Cranbourne",
@@ -9663,7 +9676,8 @@
                 ]
             ]
         ],
-        "type": "MultiLineString"
+        "type": "MultiLineString",
+        "color": "#279FD5"
     },
     {
         "name": "Sunbury",
@@ -10113,7 +10127,8 @@
                 ]
             ]
         ],
-        "type": "MultiLineString"
+        "type": "MultiLineString",
+        "color": "#FFBE00"
     },
     {
         "name": "Upfield",
@@ -10347,7 +10362,8 @@
                 -37.818563
             ]
         ],
-        "type": "LineString"
+        "type": "LineString",
+        "color": "#FFBE00"
     },
     {
         "name": "Craigieburn",
@@ -10661,6 +10677,7 @@
                 -37.818563
             ]
         ],
-        "type": "LineString"
+        "type": "LineString",
+        "color": "#FFBE00"
     }
 ]

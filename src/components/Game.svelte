@@ -1,12 +1,15 @@
 <script lang="ts">
     import type { Suburb, Coordinates } from "$lib/types";
-    import type { EventHandler } from "svelte/elements";
+    import type { EventHandler, FormEventHandler } from "svelte/elements";
     import MapLibreGl from "maplibre-gl"
     import { convertCoordinatesToGeoJsonPolygon } from "$lib/GeoJsonUtil";
     import { SvelteMap } from "svelte/reactivity";
     import distance from "@turf/distance";
     import { sineIn } from "svelte/easing";
-    import { gameState } from "$lib/gameState.svelte";
+    import { gameState, type Guess } from "$lib/gameState.svelte";
+    import { bearing } from "@turf/turf";
+    import { getCorrectTrainLines } from "$lib/guessManager";
+    import GuessListItem from "./GuessListItem.svelte";
 
     const { suburbs, targetSuburb }: { suburbs: Suburb[], targetSuburb: Suburb } = $props()
 
@@ -20,18 +23,56 @@
     )
 
     let inputValue = $state("")
+
+    const getPotentialSuburbs = (input: string) => {
+        return Array.from(suburbMap.keys()).filter(name =>
+                name.toLowerCase().includes(input)
+            )
+    }
+
+    const inputChanged = (event: Event) => {
+        const inputEvent = event as InputEvent
+        const isDropDownSelection = inputEvent.inputType === "insertReplacementText";
+        const normalizedInput = inputValue.toLowerCase();
+
+        // If not selected from datalist dropdown, require exactly one match
+        if (!isDropDownSelection) {
+            const matches = getPotentialSuburbs(normalizedInput)
+
+            if (matches.length !== 1) { return }
+        }
+
+        const suburb = suburbMap.get(normalizedInput);
+        if (!suburb) { return }
+
+        attemptGuess(suburb);
+        inputValue = ""
+    };
     
     const submit: EventHandler<SubmitEvent, HTMLFormElement> = (event) => {
         event.preventDefault(); 
-        
+
         const formData = new FormData(event.currentTarget)
         const suburbName = formData.get("suburb")
 
-        const suburb = suburbMap.get(String(suburbName).toLowerCase()) ?? null
+        const normalizedInput = String(suburbName).toLowerCase()
+
+        let suburb = suburbMap.get(normalizedInput) ?? null
+
+        if(!suburb) {
+            const matches = getPotentialSuburbs(normalizedInput)
+
+            if(matches.length === 1) {
+                suburb = suburbMap.get(matches[0]) ?? null
+            } else {
+                return
+            }
+        }
 
         inputValue = ""
-        const successfulGuess = attemptGuess(suburb)        
+        attemptGuess(suburb)        
     }
+    
 
     const attemptGuess = (suburb: Suburb | null): boolean => {
         // guess invalid
@@ -45,6 +86,9 @@
         }
 
         // guess valid
+        inputValue = ""
+
+        const isCorrect = suburb.name === targetSuburb.name
 
         const distanceToTarget = distance(
             targetSuburb.centroid, 
@@ -52,61 +96,96 @@
             { units: "kilometres"}
         )
 
-        const newGues = {
-            suburb,
-            distanceToTarget
+        const directionToTarget = bearing(
+            suburb.centroid,
+            targetSuburb.centroid, 
+        )
+
+        const cardinalToTarget: "N" | "S" | "E" | "W" = {
+            0:      "N",
+            "-0":   "N",
+            90:     "E",
+            180:    "S",
+            270:    "W",
+            "-90":  "W",
+
+        }[Math.round((directionToTarget + 90) / 90) * 90]! as "N" | "S" | "E" | "W"
+        
+        let emojiDirection = {
+            "N": "☝️",
+            "S": "👇",
+            "E": "👉",
+            "W": "👈",
+        }[cardinalToTarget]
+
+        if(isCorrect) {
+            emojiDirection = "👍"
         }
 
-        gameState.guesses.set(suburb.name.toLowerCase(), newGues)
-        gameState.emitter.emit('guessAdded', newGues)
+        const correctTrainLines = getCorrectTrainLines(suburb, targetSuburb)
 
-        flyToPoint([suburb.centroid[1], suburb.centroid[0]])
         
+
+        const newGues: Guess = {
+            isCorrect,
+            suburb,
+            distanceToTarget,
+            directionToTarget,
+            cardinalToTarget,
+            emojiDirection,
+            correctTrainLines: correctTrainLines
+        }
+
+        gameState.addGuess(newGues)
 
         return true
     }
 
-    const flyToPoint = (coord: Coordinates) => {
-        // map.flyTo({
-        //     center: coord,
-        //     speed: .6
-        // })
-    }
 
+
+    let guessList!: HTMLElement
+
+    const scrollToBottom = () => {
+        guessList.scrollTo({
+                "top": 10000,
+                "behavior": "smooth"
+            })
+    }
 
 </script>
 
-<form onsubmit={submit}>
-    <input 
-        autocomplete="off"
-        bind:value={inputValue}
-        class="border-2 border-black"
-        list="suburbs" name="suburb" id="suburb">
-
-    <datalist id="suburbs">
-        {#each suburbs as suburb}
-            <!-- svelte-ignore node_invalid_placement_ssr -->
-            <option value={suburb.name}></option>
-        {/each}
-    </datalist>
-    <input type="submit">
-</form>
-
 <div>
-    <ul>
-        {#each gameState.guesses.entries().toArray().reverse() as [_, guess]}
-            <li>
-                {guess.suburb.name} – {guess.distanceToTarget.toFixed(2)}km 
-
-                <p>
-                    correct line: {guess.suburb.lines.some((line) => targetSuburb.lines.includes(line))}
-                </p>
-            </li>
+    <button class="border px-2 cursor-pointer" onclick={() => gameState.giveUp()}> give up</button>
+    <ul bind:this={guessList} class="max-h-56 overflow-scroll">
+        {#each gameState.guesses.entries().toArray() as [_, guess]}
+            <GuessListItem { guess } mount={scrollToBottom}></GuessListItem>
 
         {/each}
         
     </ul>
 </div>
+
+<form onsubmit={submit}>
+    <input 
+        placeholder="Ringwood..."
+        autocomplete="off"
+        oninput={inputChanged}
+        bind:value={inputValue}
+        class="border border-black w-full rounded px-2"
+        list="suburbs" name="suburb" id="suburb">
+
+    <datalist id="suburbs">
+        {#if inputValue.length > 2}
+            {#each suburbs as suburb}
+                <!-- svelte-ignore node_invalid_placement_ssr -->
+                <option value={suburb.name}></option>
+            {/each}
+            
+        {/if}
+    </datalist>
+</form>
+
+
 
 
 <style></style>
