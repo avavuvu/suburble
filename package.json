@@ -9,7 +9,8 @@
 		"preview": "vite preview",
 		"prepare": "svelte-kit sync || echo ''",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
-		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch"
+		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+  		"deploy": "gh-pages -d build"
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "^4.0.0",
@@ -28,6 +29,7 @@
 		"@turf/point-to-line-distance": "^7.2.0",
 		"@turf/turf": "^7.2.0",
 		"bun": "^1.2.8",
+		"gh-pages": "^6.3.0",
 		"maplibre-gl": "^5.3.0",
 		"nanoevents": "^9.1.0",
 		"svelte-maplibre-gl": "^0.1.6"
