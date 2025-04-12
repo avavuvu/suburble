@@ -2,10 +2,10 @@ export type Suburb = {
     name: string,
     coordinates: Coordinates[],
     centroid: Coordinates,
-    lines: MetroLines[]
+    lines: (MetroLines | TramLines)[]
 }
 
-export type TrainLine = LineStringTrainLine | MultiLineTrainLine
+export type PTVLine = LineStringTrainLine | MultiLineTrainLine
 
 type LineStringTrainLine = {
     name: string,
@@ -31,3 +31,20 @@ export const metroLines = [
 ] as const
 
 export type MetroLines = typeof metroLines[number];
+
+export const trainLines = [
+    "Route 1", "Route 3", "Route 5", "Route 6",
+    "Route 11", "Route 12", "Route 16", "Route 19",
+    "Route 30", "Route 35", "Route 48", "Route 57",
+    "Route 58", "Route 59", "Route 64", "Route 67",
+    "Route 70", "Route 72", "Route 75", "Route 78",
+    "Route 82", "Route 86", "Route 96", "Route 109"
+] as const;
+
+export type TramLines = typeof trainLines[number];
+
+export type Cardinal = "North" | "South" | "East" | "West"
+
+export type PTVLineName = MetroLines | TramLines
+
+export type PTVLineOverlap = {lines: (MetroLines | TramLines)[], type: "none" | "every" | "some"}

@@ -8,8 +8,9 @@
     import { sineIn } from "svelte/easing";
     import { gameState, type Guess } from "$lib/gameState.svelte";
     import { bearing } from "@turf/turf";
-    import { getCorrectTrainLines } from "$lib/guessManager";
     import GuessListItem from "./GuessListItem.svelte";
+    import { getLineOverlap } from "$lib/guessManager";
+    import { generateHelpText } from "$lib/help";
 
     const { suburbs, targetSuburb }: { suburbs: Suburb[], targetSuburb: Suburb } = $props()
 
@@ -88,59 +89,11 @@
         // guess valid
         inputValue = ""
 
-        const isCorrect = suburb.name === targetSuburb.name
 
-        const distanceToTarget = distance(
-            targetSuburb.centroid, 
-            suburb.centroid,
-            { units: "kilometres"}
-        )
-
-        const directionToTarget = bearing(
-            suburb.centroid,
-            targetSuburb.centroid, 
-        )
-
-        const cardinalToTarget: "N" | "S" | "E" | "W" = {
-            0:      "N",
-            "-0":   "N",
-            90:     "E",
-            180:    "S",
-            270:    "W",
-            "-90":  "W",
-
-        }[Math.round((directionToTarget + 90) / 90) * 90]! as "N" | "S" | "E" | "W"
-        
-        let emojiDirection = {
-            "N": "☝️",
-            "S": "👇",
-            "E": "👉",
-            "W": "👈",
-        }[cardinalToTarget]
-
-        if(isCorrect) {
-            emojiDirection = "👍"
-        }
-
-        const correctTrainLines = getCorrectTrainLines(suburb, targetSuburb)
-
-        
-
-        const newGues: Guess = {
-            isCorrect,
-            suburb,
-            distanceToTarget,
-            directionToTarget,
-            cardinalToTarget,
-            emojiDirection,
-            correctTrainLines: correctTrainLines
-        }
-
-        gameState.addGuess(newGues)
+        gameState.addGuess(suburb)
 
         return true
     }
-
 
 
     let guessList!: HTMLElement
@@ -155,35 +108,40 @@
 </script>
 
 <div>
-    <button class="border px-2 cursor-pointer" onclick={() => gameState.giveUp()}> give up</button>
-    <ul bind:this={guessList} class="max-h-56 overflow-scroll">
+    
+    <ul bind:this={guessList} class="max-h-56 lg:max-h-48 overflow-scroll flex flex-col gap-4 lg:gap-2">
         {#each gameState.guesses.entries().toArray() as [_, guess]}
             <GuessListItem { guess } mount={scrollToBottom}></GuessListItem>
-
         {/each}
-        
     </ul>
 </div>
 
-<form onsubmit={submit}>
-    <input 
-        placeholder="Ringwood..."
-        autocomplete="off"
-        oninput={inputChanged}
-        bind:value={inputValue}
-        class="border border-black w-full rounded px-2"
-        list="suburbs" name="suburb" id="suburb">
+{#if gameState.gameState === "playing"}
+    <div class="flex justify-between">
+        <p id="help-text" class="italic px-2 min-h-12 lg:min-h-6 md:min-h-6 line-clamp-2 lg:line-clamp-1 md:line-clamp-1">{gameState.helpText}</p> 
+        <button class="border px-2 cursor-pointer" onclick={() => gameState.giveUp()}> give up</button>
+    </div>
+    <form onsubmit={submit}>
+        <input 
+            placeholder="Ringwood..."
+            autocomplete="off"
+            oninput={inputChanged}
+            bind:value={inputValue}
+            class="border border-black w-full rounded px-2"
+            list="suburbs" name="suburb" id="suburb">
 
-    <datalist id="suburbs">
-        {#if inputValue.length > 2}
-            {#each suburbs as suburb}
-                <!-- svelte-ignore node_invalid_placement_ssr -->
-                <option value={suburb.name}></option>
-            {/each}
-            
-        {/if}
-    </datalist>
-</form>
+        <datalist id="suburbs">
+            {#if inputValue.length > 2}
+                {#each suburbs as suburb}
+                    <!-- svelte-ignore node_invalid_placement_ssr -->
+                    <option value={suburb.name}></option>
+                {/each}
+                
+            {/if}
+        </datalist>
+    </form>
+    
+{/if}
 
 
 

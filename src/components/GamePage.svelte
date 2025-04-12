@@ -1,11 +1,13 @@
 <script lang="ts">
-    import type { MetroLines, Suburb, TrainLine } from "$lib/types";
+    import type { MetroLines, Suburb, PTVLine, TramLines } from "$lib/types";
     import { type DataDrivenPropertyValueSpecification, type StyleSpecification } from "maplibre-gl"
     import Game from "./Game.svelte";
     import { FillLayer, MapLibre, GeoJSONSource, LineLayer, Marker } from "svelte-maplibre-gl";
     import suburbsJson from "../json/suburbs.json"
     import trainLinesJson from "../json/trainLines.json"
-    import { gameState } from "$lib/gameState.svelte";
+    import tramLinesJson from "../json/tramLines.json"
+
+    import { gameState, type Guess } from "$lib/gameState.svelte";
     import { getClosenessRating } from "$lib/guessManager";
     import { feature, geometry, lineString, multiLineString, type AllGeoJSON } from "@turf/turf";
     import { SvelteMap } from "svelte/reactivity";
@@ -16,7 +18,8 @@
 
     const mapLibreStyle = (mapLibreStyleJson as unknown) as StyleSpecification
 
-    const trainLines = (trainLinesJson as unknown) as TrainLine[]
+    const tramLines = (tramLinesJson as unknown) as PTVLine[]
+    const trainLines = (trainLinesJson as unknown) as PTVLine[]
     const suburbs = (suburbsJson as unknown) as Suburb[]
 
     gameState.targetSuburb = targetSuburb
@@ -41,19 +44,24 @@
         }
     }))
 
-    interface MapTrainLine {
+    interface MapPTVLine {
         color: string, 
         geoJson: AllGeoJSON,
         isCorrect: boolean,
-        wasGuessed: boolean
+        wasGuessed: boolean,
+        type: "tram" | "train"
     }
 
-    
-    const trainLinesDisplay = new SvelteMap<MetroLines,MapTrainLine>(trainLines.map(trainLine => {
-        const name = trainLine.name as MetroLines
-        const geoJson = trainLine.type === "LineString"
-            ? lineString(trainLine.coordinates)
-            : multiLineString(trainLine.coordinates)
+    const PTVLinesDisplay = new SvelteMap<MetroLines | TramLines,MapPTVLine>(trainLines.concat(tramLines).map(line => {
+        const name = line.name as MetroLines | TramLines
+
+        const type = name.toLowerCase().includes("route")
+            ? "tram"
+            : "train"
+
+        const geoJson = line.type === "LineString"
+            ? lineString(line.coordinates)
+            : multiLineString(line.coordinates)
 
         return [
             name, 
@@ -61,12 +69,13 @@
                 geoJson,
                 color: "gray",
                 isCorrect: false,
-                wasGuessed: false
+                wasGuessed: false,
+                type
             }
         ]
     }))
 
-    const trainLineDisplaySorted = $derived(trainLinesDisplay.entries().toArray().toSorted(([,lineA], [,lineB]) => {
+    const trainLineDisplaySorted = $derived(PTVLinesDisplay.entries().toArray().toSorted(([,lineA], [,lineB]) => {
         let sortOrder = 0
         if(lineA.wasGuessed && !lineB.wasGuessed) { sortOrder = 1 }
         if(lineA.isCorrect) { sortOrder = 1 }
@@ -77,44 +86,65 @@
     // svelte-ignore non_reactive_update
     let map: maplibregl.Map | undefined = $state(undefined)
 
-    gameState.on("guessAdded", (guess) => {
+    const guessAdded = (guess: Guess) => {
         map!.flyTo({
             center: [guess.suburb.centroid[1], guess.suburb.centroid[0]],
             speed: .6
         })
 
+        const linesA = guess.suburb.lines.map(line => line === "Williamstown" ? "Frankston" : line)
+        const linesB = targetSuburb.lines.map(line => line === "Williamstown" ? "Frankston" : line)
 
-        guess.suburb.lines.some((line) => {
-            if(line === "Williamstown") {
-                line = "Frankston"
+        const doSuburbLinesCompletelyOverlap = linesA.length === linesB.length 
+            && linesA.every(value => linesB.includes(value))
+
+        const doSuburbsOverlap = linesA.some(line => linesB.includes(line))
+
+        guess.suburb.lines.forEach(line => {
+            const relevantLine = PTVLinesDisplay.get(line)
+
+            if(relevantLine?.isCorrect) {
+                return
             }
 
-            const relevantLine = trainLinesDisplay.get(line)
-
-            if(!relevantLine) {
-                console.error("Unknown line, this shouldn't happen", line)
-            }
-
-            if(targetSuburb.lines.includes(line)) {
-                trainLinesDisplay.set(line, {
+            if(doSuburbLinesCompletelyOverlap) {
+                PTVLinesDisplay.set(line, {
                     ...relevantLine!,
                     color: "green",
                     wasGuessed: true,
                     isCorrect: true
                 })
-            } else {
-                trainLinesDisplay.set(line, {
+
+                return
+            }
+
+            if(doSuburbsOverlap) {
+                PTVLinesDisplay.set(line, {
                     ...relevantLine!,
-                    color: "gray",
+                    color: "orange",
                     wasGuessed: true,
                     isCorrect: false
                 })
+
+                return
             }
+
+            PTVLinesDisplay.set(line, {
+                ...relevantLine!,
+                color: "gray",
+                wasGuessed: true,
+                isCorrect: false
+            })
         })
+    }
+        
+
+    gameState.on("guessAdded", guessAdded)
+    gameState.on("gameEnded", (guess) => {
+        if(guess) {
+            guessAdded(guess)
+        }
     })
-
-
-
 </script>
 
 <MapLibre 
@@ -124,11 +154,12 @@
     center={[144.96370394518178, -37.80899353983027]}
     zoom={11}>
 
-    {#each trainLineDisplaySorted as [, {geoJson, color}]}
+    {#each trainLineDisplaySorted as [, {geoJson, color, wasGuessed, type}]}
         <GeoJSONSource data={geoJson}>
             <LineLayer paint={{
                 'line-color': color,
-                'line-width': 4
+                'line-width': type === "tram" ? 2 : 5,
+                'line-opacity': wasGuessed ? 1 : 0
             }}>
             </LineLayer>
         </GeoJSONSource>
@@ -156,8 +187,8 @@
     {/each}
 </MapLibre>
 
-<div class="fixed bottom-16 w-full flex justify-center">
-    <div class="bg-white w-[90vw] rounded-2xl p-4">
+<div class="fixed bottom-12 w-full flex justify-center">
+    <div class="bg-white w-[90vw] rounded-2xl p-2">
         <Game {suburbs} {targetSuburb} ></Game>
 
     </div>
