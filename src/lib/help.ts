@@ -32,7 +32,7 @@ export type Help = LineHelp | DistanceHelp | LivesHelp
 export const generateHelpText = (help: Help) => {
 
     if(help.type === "Distance") {
-        return `${help.suburb.name} is ${help.distanceToTarget.toFixed(0)}km ${oppositeCardinal(help.cardinal).toLowerCase()} of our target`
+        return `Our target is ${help.distanceToTarget.toFixed(0)}km ${help.cardinal.toLowerCase()} of ${help.suburb.name} `
     }else if (help.type === "Line") {
         if(help.overlap.type === "none") {
             return `${help.suburb.name} does not share any train or tram lines with our target`

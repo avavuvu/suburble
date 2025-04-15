@@ -48,3 +48,12 @@ export type Cardinal = "North" | "South" | "East" | "West"
 export type PTVLineName = MetroLines | TramLines
 
 export type PTVLineOverlap = {lines: (MetroLines | TramLines)[], type: "none" | "every" | "some"}
+
+export type Factsheet = {
+    name: string,
+    housePrices?: string,
+    etymology?: {
+        "language": string,
+        "description": string
+    }
+}

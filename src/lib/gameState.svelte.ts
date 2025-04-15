@@ -7,6 +7,7 @@ import distance from "@turf/distance"
 import { bearing } from "@turf/turf"
 
 export type Guess = {
+    type: "guess",
     isCorrect: boolean,
     suburb: Suburb,
     distanceToTarget: number,
@@ -15,12 +16,17 @@ export type Guess = {
     emojiDirection: string,
     overlap: PTVLineOverlap,
     guessesLeft: number,
+}
 
+export type CorrectSuburb = {
+    type: "final",
+    didWin: boolean,
+    suburb: Suburb,
 }
 
 interface GameEvents {
     guessAdded: (guess: Guess) => void,
-    gameEnded: (guess: Guess | null) => void
+    gameEnded: (guess: CorrectSuburb) => void
 }
 
 const nullSuburb: Suburb = {
@@ -32,15 +38,22 @@ const nullSuburb: Suburb = {
 
 class GameState {
     targetSuburb = $state(nullSuburb)
-    guesses = new SvelteMap<string, Guess>()
+    guesses!: SvelteMap<string, Guess | CorrectSuburb>
     placeholderSuburb = $state("")
     helpText = $state("Type any Melbourne Suburb")
     guessesLeft = $state(8)
+    maxGuesses = 8
     gameState: "playing" | "ended"  = $state("playing")
-
+    bestGuess: Guess | undefined = $state(undefined)
     emitter: Emitter
+
     constructor() {
         this.emitter = createNanoEvents()
+    }
+
+    init(targetSuburb: Suburb) {
+        this.targetSuburb = targetSuburb
+        this.guesses = new SvelteMap<string, Guess | CorrectSuburb>()
     }
 
     on<E extends keyof GameEvents>(event: E, callback: GameEvents[E]) {
@@ -51,6 +64,17 @@ class GameState {
         this.guessesLeft -= 1
 
         const isCorrect = guessSuburb.name === this.targetSuburb.name
+        
+        if(isCorrect) {
+            this.endGame(true)
+            return
+        }
+
+        if(this.guessesLeft === 0) {
+            this.endGame(isCorrect)
+            return
+        }
+
 
         const distanceToTarget = distance(
             this.targetSuburb.centroid, 
@@ -80,13 +104,10 @@ class GameState {
             "West": "👈",
         }[cardinalToTarget]
 
-        if(isCorrect) {
-            emojiDirection = "👍"
-        }
-
         const overlap = getLineOverlap(guessSuburb.lines, this.targetSuburb.lines)
 
         const newGuess: Guess = {
+            type: "guess",
             isCorrect,
             suburb: guessSuburb,
             distanceToTarget,
@@ -112,35 +133,30 @@ class GameState {
             })
         }
 
+        if(!this.bestGuess) {
+            this.bestGuess = newGuess
+        } else {
+            if(this.bestGuess.distanceToTarget > newGuess.distanceToTarget) {
+                this.bestGuess = newGuess
+            }
+        }
+
         this.guesses.set(guessSuburb.name.toLowerCase(), newGuess)
         this.emitter.emit('guessAdded', newGuess)
 
-        if(this.guessesLeft === 0) {
-            this.endGame(isCorrect)
-        }
+
     }
 
     endGame(won: boolean) {
-        if(!won) {
-            const guess: Guess = {
-                isCorrect: true,
-                suburb: this.targetSuburb,
-                distanceToTarget: 0,
-                directionToTarget: 0,
-                cardinalToTarget: "North",
-                emojiDirection: "💔",
-                overlap: getLineOverlap(this.targetSuburb.lines, this.targetSuburb.lines),
-                guessesLeft: 0
-            }
-
-            this.guesses.set(this.targetSuburb.name.toLocaleLowerCase(), guess)
-            this.gameState = "ended"
-            this.emitter.emit('gameEnded', guess)
-            return
+        const finalEntry: CorrectSuburb = {
+            type: "final",
+            didWin: won,
+            suburb: this.targetSuburb
         }
 
+        this.guesses.set(this.targetSuburb.name.toLocaleLowerCase(), finalEntry)
         this.gameState = "ended"
-        this.emitter.emit('gameEnded')
+        this.emitter.emit('gameEnded', finalEntry)
     }
 
     giveUp() {

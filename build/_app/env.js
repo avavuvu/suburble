@@ -1,1 +1,1 @@
-export const env={}
+export const env={"PUBLIC_BASE_URL":"https://suburble-304e2.web.app"}

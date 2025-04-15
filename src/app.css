@@ -5,7 +5,7 @@
     --font-mono: 'Courier New', Courier, monospace;
     --color-correct: var(--color-green-500);
     --color-half-correct: var(--color-amber-400);
-    --color-incorrect: var(--color-gray-300);
+    --color-incorrect: var(--color-gray-200);
 }
 
 button {
