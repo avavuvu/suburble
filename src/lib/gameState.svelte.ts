@@ -143,8 +143,6 @@ class GameState {
 
         this.guesses.set(guessSuburb.name.toLowerCase(), newGuess)
         this.emitter.emit('guessAdded', newGuess)
-
-
     }
 
     endGame(won: boolean) {

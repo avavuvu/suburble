@@ -152,6 +152,17 @@
     gameState.on("guessAdded", guessAdded)
     gameState.on("gameEnded", (finalEntry) => {
         flyToSuburb(finalEntry.suburb)
+
+        finalEntry.suburb.lines.forEach(line => {
+            const relevantLine = PTVLinesDisplay.get(line)
+
+            PTVLinesDisplay.set(line, {
+                ...relevantLine!,
+                color: "green",
+                wasGuessed: true,
+                isCorrect: true
+            })
+        })
     })
 </script>
 

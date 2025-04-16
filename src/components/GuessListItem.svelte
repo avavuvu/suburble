@@ -7,9 +7,9 @@
     import { get } from "svelte/store";
     import LineDisplay from "./LineDisplay.svelte";
 
-    const { guess, mount }: { guess: Guess, mount: () => void } = $props()
+    const { guess, scrollToBottom }: { guess: Guess, scrollToBottom: () => void } = $props()
 
-    onMount(mount)
+    onMount(scrollToBottom)
     
     const getDistanceBackgroundColor = (distance: number) => {
         if(distance === 0) {

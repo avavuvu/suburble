@@ -52,6 +52,7 @@ export type PTVLineOverlap = {lines: (MetroLines | TramLines)[], type: "none" | 
 export type Factsheet = {
     name: string,
     housePrices?: string,
+    population?: number,
     etymology?: {
         "language": string,
         "description": string

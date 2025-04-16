@@ -127,12 +127,15 @@
 
 
 <div class="fixed bottom-12 w-full">
-
     <div class="w-[90vw] mx-auto flex justify-between m-1 ">
-        {#if gameState.guesses.size > 2}
+        {#if gameState.guesses.size > 2 || gameState.gameState === "ended"}
         <button class="cursor-pointer block  p-2  border-incorrect border-4 rounded-xl bg-white"
             onclick={() => expanded = !expanded}> 
-            🗂️
+            {#if expanded}
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down-icon lucide-chevron-down"><path d="m6 9 6 6 6-6"/></svg>
+            {:else}
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-up-icon lucide-chevron-up"><path d="m18 15-6-6-6 6"/></svg>
+            {/if}
         </button>
         {/if}
 
@@ -155,12 +158,12 @@
     <div class="bg-white w-[90vw] mx-auto rounded-xl p-2">
             <div>
                 <ul id="guess-list" class:expanded bind:this={guessList} class="overflow-scroll flex flex-col gap-4 lg:gap-2">
-                    {#each gameState.guesses as [_, guess], index}
+                    {#each gameState.guesses as [_, guess]}
                         {#if guess.type === "guess"}
-                            <GuessListItem { guess } mount={scrollToBottom}></GuessListItem>
+                            <GuessListItem { guess } {scrollToBottom}></GuessListItem>
                             
                         {:else}
-                            <FinalSuburb final={guess} mount={scrollToBottom}></FinalSuburb>
+                            <FinalSuburb final={guess} {scrollToBottom}></FinalSuburb>
                         {/if}
                     {/each}
                 </ul>
@@ -209,7 +212,7 @@
     }
 
     #guess-list.expanded {
-        max-height: 32rem;
+        max-height: 80vh;
     }
 
 </style>
