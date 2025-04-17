@@ -6,3 +6,7 @@
 </script>
 
 {@render children()}
+
+<svelte:head>
+	<link rel="icon" href="/assets/favicon.svg" />
+</svelte:head>

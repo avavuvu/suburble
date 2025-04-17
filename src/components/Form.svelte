@@ -12,13 +12,16 @@
     import { getLineOverlap } from "$lib/guessManager";
     import { generateHelpText } from "$lib/help";
     import FinalSuburb from "./FinalSuburb.svelte";
-    import { PUBLIC_BASE_URL } from "$env/static/public";
 
     import suburbNamesJson from "../json/suburbNames.json"
+    import { suburbCache } from "$lib/suburbCache";
 
     const suburbNames = (suburbNamesJson as unknown )as string[]
 
     let inputValue = $state("")
+    let inputElement!: HTMLInputElement 
+    let guessList!: HTMLElement
+
 
     const getPotentialSuburbs = (input: string) => {
         return suburbNames.filter(name => {
@@ -34,13 +37,17 @@
         const isDropDownSelection = inputEvent.inputType === "insertReplacementText";
         const normalizedInput = inputValue.toLowerCase();
 
-        // If not selected from datalist dropdown, require exactly one match
+        const potentialSuburbs = getPotentialSuburbs(normalizedInput)
+
+        if(potentialSuburbs.length < 8) {
+            const cacheSuburbs = potentialSuburbs.map(suburb => suburbCache.get(suburb))
+
+            await Promise.all(cacheSuburbs)
+        }
+
+        // If not selected from datalist dropdown, return
         if (!isDropDownSelection) {
             return
-
-            const matches = getPotentialSuburbs(normalizedInput)
-
-            if (matches.length !== 1) { return }
         }
 
         const suburb = findSuburb(normalizedInput);
@@ -81,8 +88,7 @@
             return false
         }
 
-        const suburbResponse = await fetch(`${PUBLIC_BASE_URL}/api/suburb/${suburbName.toLowerCase()}.json`)
-        const suburb = await suburbResponse.json()
+        const suburb = (await suburbCache.get(suburbName))!
 
         const previouslyGuessed = gameState.guesses.has(suburbName.toLowerCase())
         if(previouslyGuessed) {
@@ -97,8 +103,6 @@
         return true
     }
 
-
-    let guessList!: HTMLElement
 
     const scrollToBottom = () => {
         guessList.scrollTo({
@@ -120,6 +124,12 @@
 
     gameState.on("gameEnded", () => {
         expanded = true
+    })
+
+    $effect(() => {
+        document.addEventListener("keydown", () => {
+            inputElement.focus()
+        })
     })
 
 </script>
@@ -178,6 +188,7 @@
             <form onsubmit={submit}>
                 <div class="inline-flex w-full gap-2">
                     <input 
+                        bind:this={inputElement}
                         placeholder="Ringwood..."
                         autocomplete="off"
                         oninput={inputChanged}

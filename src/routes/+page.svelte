@@ -6,6 +6,7 @@
     import suburbNamesJson from "../json/suburbNames.json"
     const suburbNames = (suburbNamesJson as unknown )as string[]
     import { PUBLIC_BASE_URL } from "$env/static/public";
+    import Lander from "../components/Lander.svelte";
 
     let value = $state("")
     const change = async () => {
@@ -28,11 +29,11 @@
         
     }
 
-    $inspect(gameState.targetSuburb)
 </script>
 
 {#if gameState.targetSuburb.name === "null"}
-    <div class="text-center">
+    <Lander start={pickRandomSuburb}></Lander>
+    <!-- <div class="text-center">
         <h1>my little game :)</h1>
         <p>press start to play!</p>
 
@@ -46,10 +47,10 @@
                 </option>
             {/each}
         </select>
-    </div>
+    </div> -->
 
 {:else}
-<GamePage/>    
+    <GamePage/>    
 {/if}
 
 
