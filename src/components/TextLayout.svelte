@@ -16,5 +16,7 @@
 
 <main class="max-w-[900px] mx-auto py-12">
 
-    {@render children()}
+    <div class="max-w-[65ch] mx-auto">
+        {@render children()}
+    </div>
 </main>

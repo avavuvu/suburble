@@ -21,6 +21,7 @@
     let inputValue = $state("")
     let inputElement!: HTMLInputElement 
     let guessList!: HTMLElement
+    let placeholder = `${suburbNames[Math.floor(suburbNames.length * Math.random())]}...`
 
 
     const getPotentialSuburbs = (input: string) => {
@@ -189,7 +190,7 @@
                 <div class="inline-flex w-full gap-2">
                     <input 
                         bind:this={inputElement}
-                        placeholder="Ringwood..."
+                        placeholder={placeholder}
                         autocomplete="off"
                         oninput={inputChanged}
                         bind:value={inputValue}

@@ -64,16 +64,6 @@ class GameState {
         this.guessesLeft -= 1
 
         const isCorrect = guessSuburb.name === this.targetSuburb.name
-        
-        if(isCorrect) {
-            this.endGame(true)
-            return
-        }
-
-        if(this.guessesLeft === 0) {
-            this.endGame(isCorrect)
-            return
-        }
 
 
         const distanceToTarget = distance(
@@ -142,6 +132,17 @@ class GameState {
         }
 
         this.guesses.set(guessSuburb.name.toLowerCase(), newGuess)
+
+        if(isCorrect) {
+            this.endGame(true)
+            return
+        }
+
+        if(this.guessesLeft === 0) {
+            this.endGame(isCorrect)
+            return
+        }
+
         this.emitter.emit('guessAdded', newGuess)
     }
 

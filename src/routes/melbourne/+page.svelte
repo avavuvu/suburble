@@ -3,9 +3,12 @@
 
 </script>
 
+<svelte:head>
+    <title>What Counts as Melbourne? – Suburble</title>
+</svelte:head>
 
 <TextLayout>
-    <h1 class="font-bold text-2xl">What counts as Melbourne?</h1>
+    <h1 class="font-bold text-2xl">What Counts as Melbourne?</h1>
     <br>
     <p class="c0"><span class="c5"></span></p>
     <p class="c4">
@@ -50,15 +53,19 @@
         </span>
     </p>
 
+    <br>
+
+    <p>
+        <span class="c5">
+            If you'd like to read more about Suburble, check out the <a href="/about">About page!</a>
+        </span>
+    </p>
+
 </TextLayout>
 
 <style>
     a {
         cursor: pointer;
         text-decoration: underline;
-    }
-
-    p {
-        max-width: 65ch;
     }
 </style>

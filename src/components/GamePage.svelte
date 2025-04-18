@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { MetroLines, Suburb, PTVLine, TramLines } from "$lib/types";
+    import { type MetroLines, type Suburb, type PTVLine, type TramLines, metroLines, type PTVLineName } from "$lib/types";
     import { type DataDrivenPropertyValueSpecification, type StyleSpecification } from "maplibre-gl"
     import Form from "./Form.svelte";
     import { FillLayer, MapLibre, GeoJSONSource, LineLayer, Marker } from "svelte-maplibre-gl";
@@ -52,8 +52,7 @@
     interface MapPTVLine {
         color: string, 
         geoJson: AllGeoJSON,
-        isCorrect: boolean,
-        wasGuessed: boolean,
+        correctState: CorrectState,
         type: "tram" | "train"
     }
 
@@ -73,17 +72,18 @@
             {
                 geoJson,
                 color: "gray",
-                isCorrect: false,
-                wasGuessed: false,
+                correctState: "not guessed",
                 type
             }
         ]
     }))
 
+    $inspect(gameState.targetSuburb)
+
     const trainLineDisplaySorted = $derived([...PTVLinesDisplay].toSorted(([,lineA], [,lineB]) => {
         let sortOrder = 0
-        if(lineA.wasGuessed && !lineB.wasGuessed) { sortOrder = 1 }
-        if(lineA.isCorrect) { sortOrder = 1 }
+        if(lineA.correctState !== "not guessed" && lineB.correctState === "not guessed") { sortOrder = 1 }
+        if(lineA.correctState === "correct") { sortOrder = 1 }
         
         return sortOrder
     }))
@@ -100,6 +100,8 @@
         })
     }
 
+    type CorrectState = "correct" | "incorrect" | "half correct" | "not guessed"
+
     const guessAdded = (guess: Guess) => {
         flyToSuburb(guess.suburb)
 
@@ -112,39 +114,35 @@
         const doSuburbsOverlap = linesA.some(line => linesB.includes(line))
 
         guess.suburb.lines.forEach(line => {
-            const relevantLine = PTVLinesDisplay.get(line)
+            const lineDisplay = PTVLinesDisplay.get(line as PTVLineName)
 
-            if(relevantLine?.isCorrect) {
+            if(lineDisplay?.correctState === "correct") {
                 return
             }
 
             if(doSuburbLinesCompletelyOverlap) {
-                PTVLinesDisplay.set(line, {
-                    ...relevantLine!,
+                PTVLinesDisplay.set(line as PTVLineName, {
+                    ...lineDisplay!,
                     color: "green",
-                    wasGuessed: true,
-                    isCorrect: true
+                    correctState: "correct"
                 })
 
                 return
             }
 
             if(doSuburbsOverlap) {
-                PTVLinesDisplay.set(line, {
-                    ...relevantLine!,
+                PTVLinesDisplay.set(line as PTVLineName, {
+                    ...lineDisplay!,
                     color: "orange",
-                    wasGuessed: true,
-                    isCorrect: false
+                    correctState: "half correct"
                 })
 
                 return
             }
-
-            PTVLinesDisplay.set(line, {
-                ...relevantLine!,
+            PTVLinesDisplay.set(line as PTVLineName, {
+                ...lineDisplay!,
                 color: "gray",
-                wasGuessed: true,
-                isCorrect: false
+                correctState: "incorrect"
             })
         })
     }
@@ -159,8 +157,7 @@
             PTVLinesDisplay.set(line, {
                 ...relevantLine!,
                 color: "green",
-                wasGuessed: true,
-                isCorrect: true
+                correctState: "correct"
             })
         })
     })
@@ -175,12 +172,12 @@
             center={[144.96370394518178, -37.80899353983027]}
             zoom={11}>
         
-            {#each trainLineDisplaySorted as [, {geoJson, color, wasGuessed, type}]}
+            {#each trainLineDisplaySorted as [, {geoJson, color, correctState, type}]}
                 <GeoJSONSource data={geoJson}>
                     <LineLayer paint={{
                         'line-color': color,
                         'line-width': type === "tram" ? 2 : 5,
-                        'line-opacity': wasGuessed ? 1 : 0
+                        'line-opacity': correctState !== "not guessed" ? 1 : 0
                     }}>
                     </LineLayer>
                 </GeoJSONSource>
@@ -198,8 +195,15 @@
                     
                     <Marker lnglat={[guess.suburb.centroid[1],guess.suburb.centroid[0]]}>
                         {#snippet content()}
-                            <div class="w-min text-3xl">
-                                {guess.emoji}
+                            <div class="flex justify-center flex-col items-center">
+                                <div class="w-min text-3xl">
+                                    {guess.emoji}
+                                </div>
+                                <div class="text-gray-700">
+                                    {guess.suburb.name}
+                                </div>
+                                
+
                             </div>
                         {/snippet}
                     </Marker>
