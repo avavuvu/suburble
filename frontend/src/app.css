@@ -1,0 +1,18 @@
+@import 'tailwindcss';
+
+@theme {
+    --max-width-main: 1280px;
+    --font-mono: 'Courier New', Courier, monospace;
+    --color-correct: #4e8a4f;
+    --color-half-correct: var(--color-amber-400);
+    --color-incorrect: var(--color-gray-200);
+}
+
+button {
+    cursor: pointer;
+}
+
+.link {
+    cursor: pointer;
+    text-decoration: underline;
+}
