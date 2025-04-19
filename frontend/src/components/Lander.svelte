@@ -57,7 +57,7 @@
             {#if streak.count === 1}
                 <p>You solved {streak.dayDistance === 0 ? "today" : "yesterday"}'s Suburble in {streak.streaks[0].guesses} {streak.streaks[0].guesses === 1 ? "guess" : "guesses"}! 🔥</p>
                 {#if streak.dayDistance === 1}
-                    <p>Can you solve today's Suburble in {streak.count - 1}⁉️</p>
+                    <p>Can you solve today's Suburble in {streak.streaks[0].guesses - 1}⁉️</p>
                 {/if}
             {:else if streak.count !== 0}
                 <p>You're on a {streak.count === 8 ? "an" : "a"} {streak.count} day streak! 🔥</p>
@@ -71,8 +71,6 @@
 
     <div class="border-t-2 my-4 border-incorrect"></div>
 </main>
-
-
 
 <footer class="max-w-[900px] mx-auto min-h-48 p-4">
     <div class="flex gap-4  justify-stretch align-middle items-center bg-gray-300 rounded p-2 w-fit mx-auto">

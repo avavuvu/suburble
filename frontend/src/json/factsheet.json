@@ -445,7 +445,11 @@
             "language": "English",
             "description": "Named after Box Hill, Surrey, England"
         },
-        "population": 12337
+        "population": 12337,
+        "attribution": {
+            "author": "Philip Mallis",
+            "type": "CC BY-SA 2.0"
+        }
     },
     {
         "name": "Eltham",
@@ -552,7 +556,11 @@
             "language": "Indigenous",
             "description": "Originally Kooyong Koot Creek, possibly local word for 'camp', 'resting place' or 'haunt of the wild fowl'"
         },
-        "population": 842
+        "population": 842,
+        "attribution": {
+            "author": "Brycewhite",
+            "type": "CC BY-SA 4.0"
+        }
     },
     {
         "name": "Glen Iris",
@@ -570,7 +578,11 @@
             "language": "English",
             "description": "Named for British Prime Minister, William Lamb, 2nd Viscount Melbourne"
         },
-        "population": 14953
+        "population": 14953,
+        "attribution": {
+            "author": "Philip Mallis",
+            "type": "CC BY-SA 2.0"
+        }
     },
     {
         "name": "Brunswick West",
@@ -633,7 +645,11 @@
             "language": "English",
             "description": "Named for local water storage reservoirs"
         },
-        "population": 50474
+        "population": 50474,
+        "attribution": {
+            "author": "Philip Mallis",
+            "type": "CC BY-SA 2.0"
+        }
     },
     {
         "name": "Thomastown",
@@ -749,7 +765,11 @@
             "language": "English",
             "description": "Named for Peter Lalor"
         },
-        "population": 23219
+        "population": 23219,
+        "attribution": {
+            "author": "Philip Mallis",
+            "type": "CC BY-SA 2.0"
+        }
     },
     {
         "name": "Epping",
@@ -1238,7 +1258,11 @@
             "language": "English",
             "description": "Originally Grand View Park, name changed to Oak Park in 1879"
         },
-        "population": 6714
+        "population": 6714,
+        "attribution": {
+            "author": "Sgroey",
+            "type": "CC BY-SA 4.0"
+        }
     },
     {
         "name": "Ascot Vale",
@@ -1710,7 +1734,11 @@
             "language": "English",
             "description": "Named for D.B.Hampton, and possibly also connected to the name for the English royal residence"
         },
-        "population": 5069
+        "population": 5069,
+        "attribution": {
+            "author": "Philip Mallis",
+            "type": "CC BY-SA 2.0"
+        }
     },
     {
         "name": "Yarraville",
@@ -1889,7 +1917,11 @@
             "language": "English",
             "description": "Named for William Highett"
         },
-        "population": 12016
+        "population": 12016,
+        "attribution": {
+            "author": "Celco85",
+            "type": "CC BY-SA 4.0"
+        }
     },
     {
         "name": "Keilor",
@@ -2119,7 +2151,11 @@
             "language": "Indigenous",
             "description": "From local word meaning 'mother's milk'"
         },
-        "population": 26
+        "population": 26,
+        "attribution": {
+            "author": "Philip Mallis",
+            "type": "CC BY-SA 2.0"
+        }
     },
     {
         "name": "Mentone",
@@ -2520,7 +2556,11 @@
             "language": "English",
             "description": "Named for District of Chelsea in London, England"
         },
-        "population": 8347
+        "population": 8347,
+        "attribution": {
+            "author": "Philip Mallis",
+            "type": "CC BY-SA 2.0"
+        }
     },
     {
         "name": "Upwey",
@@ -2776,7 +2816,11 @@
             "language": "English",
             "description": "Named after John. M. Cooke, mate under Captain William Hobson on HMS Rattlesnake"
         },
-        "population": 66781
+        "population": 66781,
+        "attribution": {
+            "author": "Philip Mallis",
+            "type": "CC BY-SA 2.0"
+        }
     },
     {
         "name": "Hampton Park",
@@ -2875,7 +2919,11 @@
             "language": "English",
             "description": "Named for Cranbourne, Berkshire, England"
         },
-        "population": 21281
+        "population": 21281,
+        "attribution": {
+            "author": "John O'Neill",
+            "type": "CC BY-SA 3.0"
+        }
     },
     {
         "name": "Diggers Rest",

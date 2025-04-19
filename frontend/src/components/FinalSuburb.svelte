@@ -1,9 +1,11 @@
 <script lang="ts">
     import { gameState, type CorrectSuburb } from "$lib/gameState.svelte";
     import { getLineColor } from "$lib/guessManager";
-    import type { Factsheet } from "$lib/types";
+    import { attribution, type Factsheet } from "$lib/types";
     import { onMount } from "svelte";
     import { PUBLIC_BASE_URL } from "$env/static/public";
+    import { fade } from "svelte/transition";
+    import Share from "./Share.svelte";
 
     const { final, scrollToBottom }: { final: CorrectSuburb, scrollToBottom: () => void } = $props()
 
@@ -56,6 +58,8 @@
         color: getLineColor(line)
     }))
 
+    let showAttribution = $state(false)
+
 </script>
 
 {#await getFactsheet() then factSheet}
@@ -82,14 +86,26 @@
                     <defs>
                         <mask id="text-mask-1" >
                             <text x="50%" y="70%" stroke="black" stroke-width="3" text-anchor="middle" transform="scale({7.5 / final.suburb.name.length},2.3)"  transform-origin="center" font-family="Impact, Helvetica" font-weight="bold" font-size="10em" fill="#fff">{final.suburb.name.toUpperCase()}</text>
-
-
                         </mask>
                     </defs>
                     
                     <text x="50%" y="70%" stroke="black" stroke-width="3" text-anchor="middle" transform="scale({7.5 / final.suburb.name.length},2.3)"  transform-origin="center" font-family="Impact, Helvetica" font-weight="bold" font-size="10em" >{final.suburb.name.toUpperCase()}</text>
                     <image width="660" height="330" preserveAspectRatio="none"   xlink:href="/images/suburbs/{final.suburb.name.toLowerCase()}/{final.suburb.name.toLowerCase()}.webp" mask="url(#text-mask-1)"/>
                 </svg>
+                {#if factSheet.attribution}
+                    <button
+                        class="absolute bottom-1 left-1 text-sm "
+                        aria-label="info" 
+                        onclick={() => showAttribution = !showAttribution}>
+                        <svg class="inline" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+                        {#if showAttribution}
+                            <span transition:fade={{"duration": 100}}>
+                                Photo by {factSheet.attribution?.author}. Licensed under 
+                                <a class="link" href={attribution[factSheet.attribution.type]}>{factSheet.attribution.type}</a>
+                            </span>
+                        {/if}
+                    </button>
+                {/if}
                 
             </div>
     </div>
@@ -126,7 +142,7 @@
         
     {/if}
     <div class="p-2 rounded  bg-incorrect justify-center flex col-span-2">
-        <button class="bg-white p-2 px-4 rounded">Share!</button>
+        <Share {final}></Share>
     </div>
     
 </li>
