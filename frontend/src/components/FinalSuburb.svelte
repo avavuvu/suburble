@@ -6,13 +6,13 @@
     import { PUBLIC_BASE_URL } from "$env/static/public";
     import { fade } from "svelte/transition";
     import Share from "./Share.svelte";
+    import Postcard from "./Postcard.svelte";
+    import { SuburbCache } from "$lib/suburbCache";
 
     const { final, scrollToBottom }: { final: CorrectSuburb, scrollToBottom: () => void } = $props()
 
-
-
     const getFactsheet = async(): Promise<Factsheet> => {
-        const response = await fetch(`${PUBLIC_BASE_URL}/api/factsheet/${final.suburb.name.toLowerCase()}.json`)
+        const response = await fetch(`/api/factsheet/${SuburbCache.normalizeSuburbName(final.suburb.name)}.json`)
         
         scrollToBottom()
         
@@ -58,7 +58,7 @@
         color: getLineColor(line)
     }))
 
-    let showAttribution = $state(false)
+
 
 </script>
 
@@ -71,43 +71,7 @@
         <div>{getText(final.didWin, "Congrats")}</div>
     </div>
     <div class=" p-2 rounded text-center col-span-2 flex justify-center bg-incorrect">
-
-            <div class="bg-white relative border-black border-2 p-4 max-w-[600px] flex-1">
-                <span class="[font-family:'Allura',cursive]
-                absolute italic text-3xl lg:text-7xl left-2 top-2 -rotate-4 -translate-y-2 text-red-600 grid grid-cols-1 grid-rows-1">
-                    <span class="text-transparent bg-white scale-y-50 row-start-1 row-end-2 col-start-1 col-end-2">
-                        Greetings from
-                    </span>
-                    <span class="scale-y-100 row-start-1 row-end-2 col-start-1 col-end-2">
-                        Greetings from
-                    </span>
-                </span>
-                <svg width="100%" height="100%" viewBox="0 0 660 330">
-                    <defs>
-                        <mask id="text-mask-1" >
-                            <text x="50%" y="70%" stroke="black" stroke-width="3" text-anchor="middle" transform="scale({7.5 / final.suburb.name.length},2.3)"  transform-origin="center" font-family="Impact, Helvetica" font-weight="bold" font-size="10em" fill="#fff">{final.suburb.name.toUpperCase()}</text>
-                        </mask>
-                    </defs>
-                    
-                    <text x="50%" y="70%" stroke="black" stroke-width="3" text-anchor="middle" transform="scale({7.5 / final.suburb.name.length},2.3)"  transform-origin="center" font-family="Impact, Helvetica" font-weight="bold" font-size="10em" >{final.suburb.name.toUpperCase()}</text>
-                    <image width="660" height="330" preserveAspectRatio="none"   xlink:href="/images/suburbs/{final.suburb.name.toLowerCase()}/{final.suburb.name.toLowerCase()}.webp" mask="url(#text-mask-1)"/>
-                </svg>
-                {#if factSheet.attribution}
-                    <button
-                        class="absolute bottom-1 left-1 text-sm "
-                        aria-label="info" 
-                        onclick={() => showAttribution = !showAttribution}>
-                        <svg class="inline" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
-                        {#if showAttribution}
-                            <span transition:fade={{"duration": 100}}>
-                                Photo by {factSheet.attribution?.author}. Licensed under 
-                                <a class="link" href={attribution[factSheet.attribution.type]}>{factSheet.attribution.type}</a>
-                            </span>
-                        {/if}
-                    </button>
-                {/if}
-                
-            </div>
+        <Postcard {final} { factSheet}></Postcard>
     </div>
     <div class="p-1 rounded  bg-incorrect flex flex-wrap justify-start"  >
         {#each linesDisplay as {line, color}}
@@ -150,16 +114,4 @@
 {/await}
 
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Allura&display=swap');
-
-    .bg-clip {
-        font-weight: bold;
-        font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
-        color: transparent;
-        background-clip: text;
-        -webkit-background-clip: text;
-        background-image: url(/images/suburbs/carlton/carlton.avif);
-        background-size: cover;
-        background-position: center;
-    }
 </style>

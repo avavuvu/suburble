@@ -1,87 +1,24 @@
 <script lang="ts">
-    import type { Suburb, Coordinates } from "$lib/types";
-    import type { EventHandler, FormEventHandler } from "svelte/elements";
-    import MapLibreGl from "maplibre-gl"
-    import { convertCoordinatesToGeoJsonPolygon } from "$lib/GeoJsonUtil";
-    import { SvelteMap } from "svelte/reactivity";
-    import distance from "@turf/distance";
-    import { sineIn } from "svelte/easing";
     import { gameState, type Guess } from "$lib/gameState.svelte";
-    import { bearing } from "@turf/turf";
     import GuessListItem from "./GuessListItem.svelte";
-    import { getLineOverlap } from "$lib/guessManager";
-    import { generateHelpText } from "$lib/help";
     import FinalSuburb from "./FinalSuburb.svelte";
 
     import suburbNamesJson from "../json/suburbNames.json"
     import { suburbCache } from "$lib/suburbCache";
+    import DesktopInput from "./DesktopInput.svelte";
+    import { SuburbQuery } from "$lib/suburbQuery";
+    import MobileInput from "./MobileInput.svelte";
+    import { dev } from "$app/environment";
+    import { UAParser } from "ua-parser-js";
+
+    const { device } = UAParser(window.navigator.userAgent)
+    const isDesktop = device.type === undefined || !['wearable', 'mobile'].includes(device.type);
 
     const suburbNames = (suburbNamesJson as unknown )as string[]
 
-    let inputValue = $state("")
-    let inputElement!: HTMLInputElement 
+    const suburbQuery = new SuburbQuery(suburbNames)
+
     let guessList!: HTMLElement
-    let placeholder = `${suburbNames[Math.floor(suburbNames.length * Math.random())]}...`
-
-
-    const getPotentialSuburbs = (input: string) => {
-        return suburbNames.filter(name => {
-            return name.toLowerCase().includes(input)
-        })
-    }
-
-    const findSuburb = (input: string) => 
-        suburbNames.find(name => input === name.toLowerCase())
-
-    const inputChanged = async (event: Event) => {
-        const inputEvent = event as InputEvent
-        const isDropDownSelection = inputEvent.inputType === "insertReplacementText";
-        const normalizedInput = inputValue.toLowerCase();
-
-        const potentialSuburbs = getPotentialSuburbs(normalizedInput)
-
-        if(potentialSuburbs.length < 8) {
-            const cacheSuburbs = potentialSuburbs.map(suburb => suburbCache.get(suburb))
-
-            await Promise.all(cacheSuburbs)
-        }
-
-        // If not selected from datalist dropdown, return
-        if (!isDropDownSelection) {
-            return
-        }
-
-        const suburb = findSuburb(normalizedInput);
-        if (!suburb) { return }
-
-        await attemptGuess(suburb);
-        inputValue = ""
-    };
-    
-    const submit: EventHandler<SubmitEvent, HTMLFormElement> = async (event) => {
-        event.preventDefault(); 
-
-        const formData = new FormData(event.currentTarget)
-        const suburbName = formData.get("suburb")
-
-        const normalizedInput = String(suburbName).toLowerCase()
-
-        let suburb = findSuburb(normalizedInput) ?? null
-
-        if(!suburb) {
-            const matches = getPotentialSuburbs(normalizedInput)
-
-            if(matches.length === 1) {
-                suburb = findSuburb(matches[0].toLowerCase()) ?? null
-            } else {
-                return
-            }
-        }
-
-        inputValue = ""
-        await attemptGuess(suburb)        
-    }
-    
 
     const attemptGuess = async (suburbName: string | null): Promise<boolean> => {
         // guess invalid
@@ -89,15 +26,31 @@
             return false
         }
 
+        const normalizedInput = suburbName.toLowerCase()
+
+        const isSuburb = suburbQuery.findSuburb(normalizedInput)
+
+        if (!isSuburb) { 
+            gameState.setHelpText( {
+                type: "Error",
+                errorType: "Not a Suburb",
+                suburbName: `${suburbName.slice(0, 1).toUpperCase()}${suburbName.slice(1)}`
+            })
+
+            return false 
+        }
+
         const suburb = (await suburbCache.get(suburbName))!
 
         const previouslyGuessed = gameState.guesses.has(suburbName.toLowerCase())
         if(previouslyGuessed) {
+            gameState.setHelpText( {
+                type: "Error",
+                errorType: "Already Guessed",
+                suburbName: `${suburbName.slice(0, 1).toUpperCase()}${suburbName.slice(1)}`
+            })
             return false
         }
-
-        // guess valid
-        inputValue = ""
 
         gameState.addGuess(suburb)
 
@@ -127,12 +80,6 @@
         expanded = true
     })
 
-    $effect(() => {
-        document.addEventListener("keydown", () => {
-            inputElement.focus()
-        })
-    })
-
 </script>
 
 
@@ -150,7 +97,7 @@
         </button>
         {/if}
 
-        {#if gameState.guessesLeft < 5 && gameState.gameState === "playing"}
+        {#if (gameState.guessesLeft < 5 && gameState.gameState === "playing") || dev }
             <button class="cursor-pointer block  p-2  border-incorrect border-4 rounded-xl"
                 style:background-color={giveUpStatus === 0 ? "var(--color-white)" : "var(--color-red-400)"} 
                 style:color={giveUpStatus === 0 ? "var(--color-black)" : "var(--color-white)"} 
@@ -182,34 +129,15 @@
 
             {#if gameState.gameState === "playing"}
 
-            <div class="flex justify-between py-2">
-                <p id="help-text" class="italic px-2 min-h-12 lg:min-h-6 md:min-h-6 line-clamp-2 lg:line-clamp-1 md:line-clamp-1">{gameState.helpText}</p> 
-            </div>
-
-            <form onsubmit={submit}>
-                <div class="inline-flex w-full gap-2">
-                    <input 
-                        bind:this={inputElement}
-                        placeholder={placeholder}
-                        autocomplete="off"
-                        oninput={inputChanged}
-                        bind:value={inputValue}
-                        class="border border-black w-full rounded px-2"
-                        list="suburbs" name="suburb" id="suburb">
-                    <button type="submit">✅</button>
+                <div class="flex justify-between py-2">
+                    <p id="help-text" class="italic px-2 min-h-12 lg:min-h-6 md:min-h-6 line-clamp-2 lg:line-clamp-1 md:line-clamp-1">{gameState.helpText}</p> 
                 </div>
 
-                <datalist id="suburbs">
-                    {#if inputValue.length > 2}
-                        {#each suburbNames as suburb}
-                            <!-- svelte-ignore node_invalid_placement_ssr -->
-                            <option value={suburb}></option>
-                        {/each}
-                        
-                    {/if}
-                </datalist>
-            </form>
-                
+                {#if isDesktop}
+                    <DesktopInput {suburbQuery} {attemptGuess}/>
+                {:else}
+                    <MobileInput {suburbQuery} { attemptGuess}></MobileInput>
+                {/if}
             {/if}
 
     </div>

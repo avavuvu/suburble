@@ -18,18 +18,22 @@ class SuburbDatabase extends Dexie {
 }
 
 
-class SuburbCache {
+export class SuburbCache {
     suburbDatabase = new SuburbDatabase()
 
+    static normalizeSuburbName(suburbName: string) {
+        return suburbName.toLowerCase().replaceAll(" ", "-")
+    }
+
     async get(suburbName: string): Promise<Suburb | null> {
-        let suburb = await this.suburbDatabase.suburbs.get(suburbName.toLowerCase())
+        let suburb = await this.suburbDatabase.suburbs.get(SuburbCache.normalizeSuburbName(suburbName))
 
         //if suburb exists
         if(suburb) {
             return suburb as Suburb
         }
 
-        const suburbResponse = await fetch(`${PUBLIC_BASE_URL}/api/suburb/${suburbName.toLowerCase()}.json`)
+        const suburbResponse = await fetch(`/api/suburb/${SuburbCache.normalizeSuburbName(suburbName)}.json`)
         suburb = await suburbResponse.json()
 
         if(!suburb) {
@@ -42,7 +46,7 @@ class SuburbCache {
     }
 
     async add(suburb: Suburb) {
-        let suburbAlreadyExists = await this.suburbDatabase.suburbs.get(suburb.name.toLowerCase())
+        let suburbAlreadyExists = await this.suburbDatabase.suburbs.get(SuburbCache.normalizeSuburbName(suburb.name))
 
         if(suburbAlreadyExists) { 
             return
@@ -50,7 +54,7 @@ class SuburbCache {
 
         await this.suburbDatabase.suburbs.add({
             ...suburb,
-            key: suburb.name.toLowerCase()
+            key: SuburbCache.normalizeSuburbName(suburb.name)
         })
         
     }

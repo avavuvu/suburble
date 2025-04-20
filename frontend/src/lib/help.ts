@@ -1,14 +1,5 @@
 import type { Cardinal, PTVLineName, PTVLineOverlap, Suburb } from "./types"
 
-const oppositeCardinal = (cardinal: Cardinal): Cardinal => {
-    return {
-        "North": "South",
-        "South": "North",
-        "East": "West",
-        "West": "East",
-    }[cardinal] as Cardinal
-}
-
 type DistanceHelp = {
     type: "Distance",
     distanceToTarget: number,
@@ -27,10 +18,15 @@ type LivesHelp = {
     lives: number
 }
 
-export type Help = LineHelp | DistanceHelp | LivesHelp
+type ErrorHelp = {
+    type: "Error",
+    errorType: "Already Guessed" | "Not a Suburb",
+    suburbName: string
+}
+
+export type Help = LineHelp | DistanceHelp | LivesHelp | ErrorHelp
 
 export const generateHelpText = (help: Help) => {
-
     if(help.type === "Distance") {
         return `Our target is ${help.distanceToTarget.toFixed(0)}km ${help.cardinal.toLowerCase()} of ${help.suburb.name} `
     }else if (help.type === "Line") {
@@ -58,6 +54,12 @@ export const generateHelpText = (help: Help) => {
         }
     } else if(help.type === "Lives") {
         return `You have ${help.lives} guesses left!`
+    } else if(help.type === "Error") {
+        if(help.errorType === "Already Guessed") {
+            return `${help.suburbName} has already been gussed!`
+        }else {
+            return `"${help.suburbName}" is not in the Suburb list.`
+        }
     }
 
 
