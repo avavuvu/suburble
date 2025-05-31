@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import os
 import yaml
 from datetime import datetime
+from zoneinfo import ZoneInfo
 
 app = FastAPI()
 
@@ -33,12 +34,15 @@ async def root():
 
 @app.get("/today")
 async def today():
-    today = datetime.now().date()
-    formatted = f"{today.year}-{today.month}-{today.day}"
+    zone_info = ZoneInfo("Australia/Melbourne")
+    today = datetime.now(tz=zone_info)
+    todays_date = today.date()
+    formatted = f"{todays_date.year}-{todays_date.month}-{todays_date.day}"
 
     return {
-        "suburb": dates_dict[today], 
-        "date": formatted
+        "suburb": dates_dict[todays_date], 
+        "date": formatted,
+        "time": today.time().isoformat()
     }
 
 if __name__ == "__main__":

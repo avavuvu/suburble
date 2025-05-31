@@ -1,11 +1,9 @@
 <script lang="ts">
-    import { type MetroLines, type Suburb, type PTVLine, type TramLines, metroLines, type PTVLineName } from "$lib/types";
-    import { type DataDrivenPropertyValueSpecification, type StyleSpecification } from "maplibre-gl"
+    import { type MetroLines, type Suburb, type PTVLine, type PTVLineName } from "$lib/types";
+    import { type StyleSpecification } from "maplibre-gl"
     import Form from "./Form.svelte";
-    import { FillLayer, MapLibre, GeoJSONSource, LineLayer, Marker } from "svelte-maplibre-gl";
-    import suburbsJson from "../json/suburbs.json"
+    import { FillLayer, MapLibre, GeoJSONSource, LineLayer, Marker, AttributionControl } from "svelte-maplibre-gl";
     import trainLinesJson from "../json/trainLines.json"
-    import tramLinesJson from "../json/tramLines.json"
 
     import { gameState, type Guess } from "$lib/gameState.svelte";
     import { getClosenessRating } from "$lib/guessManager";
@@ -18,7 +16,6 @@
 
     const mapLibreStyle = (mapLibreStyleJson as unknown) as StyleSpecification
 
-    const tramLines = (tramLinesJson as unknown) as PTVLine[]
     const trainLines = (trainLinesJson as unknown) as PTVLine[]
 
     const guessesDisplay = $derived([...gameState.guesses].map(([, guess]) => {
@@ -56,15 +53,10 @@
         color: string, 
         geoJson: AllGeoJSON,
         correctState: CorrectState,
-        type: "tram" | "train"
     }
 
-    const PTVLinesDisplay = new SvelteMap<MetroLines | TramLines,MapPTVLine>(trainLines.concat(tramLines).map(line => {
-        const name = line.name as MetroLines | TramLines
-
-        const type = name.toLowerCase().includes("route")
-            ? "tram"
-            : "train"
+    const PTVLinesDisplay = new SvelteMap<MetroLines,MapPTVLine>(trainLines.map(line => {
+        const name = line.name as MetroLines
 
         const geoJson = line.type === "LineString"
             ? lineString(line.coordinates)
@@ -76,7 +68,6 @@
                 geoJson,
                 color: "gray",
                 correctState: "not guessed",
-                type
             }
         ]
     }))
@@ -91,6 +82,7 @@
 
     // svelte-ignore non_reactive_update
     let map: maplibregl.Map | undefined = $state(undefined)
+
 
     const flyToSuburb = (suburb: Suburb) => {
         map!.flyTo({
@@ -167,17 +159,23 @@
 <main>
     <div>
         <MapLibre 
+            dragRotate={false}
+            keyboard={false}
+            touchZoomRotate={false}
+            attributionControl={false}
             bind:map
             class='w-screen h-screen absolute'
             style={mapLibreStyle}
             center={[144.96370394518178, -37.80899353983027]}
             zoom={11}>
-        
-            {#each trainLineDisplaySorted as [, {geoJson, color, correctState, type}]}
+
+            <AttributionControl position={"top-left"} compact/>
+            
+            {#each trainLineDisplaySorted as [, {geoJson, color, correctState}]}
                 <GeoJSONSource data={geoJson}>
                     <LineLayer paint={{
                         'line-color': color,
-                        'line-width': type === "tram" ? 2 : 5,
+                        'line-width': 5,
                         'line-opacity': correctState !== "not guessed" ? 1 : 0
                     }}>
                     </LineLayer>

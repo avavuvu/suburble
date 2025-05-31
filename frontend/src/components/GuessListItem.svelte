@@ -1,10 +1,6 @@
 <script lang="ts">
     import { gameState, type Guess } from "$lib/gameState.svelte";
-    import { getLineColor } from "$lib/guessManager";
-    import type { MetroLines, PTVLineOverlap, TramLines } from "$lib/types";
-    import distance from "@turf/distance";
     import { onMount } from "svelte";
-    import { get } from "svelte/store";
     import LineDisplay from "./LineDisplay.svelte";
 
     const { guess, scrollToBottom }: { guess: Guess, scrollToBottom: () => void } = $props()

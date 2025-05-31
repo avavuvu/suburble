@@ -7,6 +7,13 @@ type DistanceHelp = {
     suburb: Suburb,
 }
 
+type WarmCoolHelp = {
+    type: "WarmCool",
+    lastGuessDistance: number
+    thisGuessDistance: number
+    suburb: Suburb
+}
+
 type LineHelp = {
     type: "Line",
     overlap: PTVLineOverlap,
@@ -24,33 +31,42 @@ type ErrorHelp = {
     suburbName: string
 }
 
-export type Help = LineHelp | DistanceHelp | LivesHelp | ErrorHelp
+export type Help = LineHelp | DistanceHelp | LivesHelp | ErrorHelp | WarmCoolHelp
 
 export const generateHelpText = (help: Help) => {
     if(help.type === "Distance") {
-        return `Our target is ${help.distanceToTarget.toFixed(0)}km ${help.cardinal.toLowerCase()} of ${help.suburb.name} `
-    }else if (help.type === "Line") {
+
+        return `The mystery suburb is ${help.distanceToTarget.toFixed(0)}km ${help.cardinal.toLowerCase()} of ${help.suburb.name} `
+    
+    } else if (help.type === "WarmCool") {
+        if(help.lastGuessDistance > help.thisGuessDistance) {
+            return `${help.suburb.name} is warmer!`
+        }
+
+        return `${help.suburb.name} is cooler`
+    }
+    else if (help.type === "Line") {
         if(help.overlap.type === "none") {
-            return `${help.suburb.name} does not share any train or tram lines with our target`
+            return `${help.suburb.name} does not share any train lines with the mystery suburb`
         }
 
         if(help.overlap.type === "some") {
             const lines = `${help.overlap.lines.slice(0,-1).join(", ")} and ${help.overlap.lines.at(-1)}`
 
             if(help.overlap.lines.length > 2) {
-                return `Our target could be on any of these ${help.overlap.lines.length} lines: ${lines}`
+                return `The mystery suburb could be on any of these ${help.overlap.lines.length} lines: ${lines}`
             }
 
-            return `Our target could be on any of these lines: ${lines}`
+            return `The mystery suburb could be on any of these lines: ${lines}`
         }
 
         if(help.overlap.type === "every") {
             if(help.overlap.lines.length === 1) {
-                return `Our target is on the ${help.overlap.lines[0]}`
+                return `The mystery suburb is on the ${help.overlap.lines[0]} Line`
             }
 
             const lines = `${help.overlap.lines.slice(0,-1).join(", ")} and ${help.overlap.lines.at(-1)}`
-            return `Our target is on these lines: ${lines}`
+            return `The mystery suburb is on these lines: ${lines}`
         }
     } else if(help.type === "Lives") {
         return `You have ${help.lives} guesses left!`

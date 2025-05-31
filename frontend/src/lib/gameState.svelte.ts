@@ -1,5 +1,5 @@
 import { SvelteMap } from "svelte/reactivity"
-import type { Cardinal, MetroLines, PTVLineOverlap, Suburb, TramLines } from "./types"
+import type { Cardinal, MetroLines, PTVLineOverlap, Suburb } from "./types"
 import { createNanoEvents, type Emitter } from "nanoevents"
 import { getLineOverlap } from "./guessManager"
 import { generateHelpText, type Help } from "./help"
@@ -47,6 +47,7 @@ class GameState {
     maxGuesses = 8
     gameState: "playing" | "ended"  = $state("playing")
     bestGuess: Guess | undefined = $state(undefined)
+    lastGuess: Guess | undefined = $state(undefined)
     emitter: Emitter
     dateKey!: string
 
@@ -153,12 +154,21 @@ class GameState {
                 suburb: guessSuburb
             })
         } else {
-            gameState.setHelpText({
-                type: "Distance",
-                cardinal: cardinalToTarget,
-                distanceToTarget,
-                suburb: guessSuburb
-            })
+            if(this.lastGuess) {
+                gameState.setHelpText({
+                    type: "WarmCool",
+                    lastGuessDistance: this.lastGuess.distanceToTarget,
+                    thisGuessDistance: distanceToTarget,
+                    suburb: guessSuburb
+                })
+            } else {
+                gameState.setHelpText({
+                    type: "Distance",
+                    cardinal: cardinalToTarget,
+                    distanceToTarget,
+                    suburb: guessSuburb
+                })
+            }
         }
 
         if(!this.bestGuess) {
@@ -181,6 +191,7 @@ class GameState {
             return
         }
 
+        this.lastGuess = newGuess
         this.emitter.emit('guessAdded', newGuess)
     }
 

@@ -8,7 +8,7 @@
     import Lander from "../components/Lander.svelte";
     import { streakManager } from "$lib/streakManager";
     import { dev } from "$app/environment";
-    import { suburbCache } from "$lib/suburbCache";
+    import { SuburbCache, suburbCache } from "$lib/suburbCache";
 
     let error: any = $state("")
 
@@ -30,7 +30,7 @@
         const response = await fetch(`${PUBLIC_API_URL}/today`)
         const today: APIResponse = await response.json()
 
-        const suburbResponse = await fetch(`${PUBLIC_BASE_URL}/api/suburb/${today.suburb!.toLowerCase()}.json`)
+        const suburbResponse = await fetch(`${PUBLIC_BASE_URL}/api/suburb/${SuburbCache.normalizeSuburbName(today.suburb!)}.json`)
         const targetSuburb: Suburb = await suburbResponse.json()
 
         return {suburb: targetSuburb, date: today.date}

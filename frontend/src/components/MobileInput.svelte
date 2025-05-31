@@ -39,9 +39,11 @@
     {#if inputValue.length > 2 && potentialSuburbs.length > 0}
         <div transition:slide 
             class="absolute h-48 w-full bottom-8 bg-incorrect overflow-scroll p-2
-                rounded shadow-2xl">
+                rounded shadow-2xl text-xl">
             {#each potentialSuburbs as suburb}
-                <button onclick={async () => await makeGuess(suburb)} class="block">
+                <button
+                    onclick={async () => await makeGuess(suburb)} 
+                    class="block my-1 py-1 bg-white w-full rounded">
                     {suburb}
 
                 </button>

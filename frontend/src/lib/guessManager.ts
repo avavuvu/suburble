@@ -1,6 +1,6 @@
 import { sineIn } from "svelte/easing"
-import type { Suburb, PTVLine, MetroLines, TramLines, Cardinal, PTVLineName, PTVLineOverlap } from "./types"
-import { trainLineColorMap, tramLineColorMap } from "./consts"
+import type { Suburb, PTVLine, MetroLines, Cardinal, PTVLineName, PTVLineOverlap } from "./types"
+import { trainLineColorMap } from "./consts"
 
 export const getClosenessRating = (distanceToTarget: number, farExtent = 20) => {
     return sineIn(
@@ -11,7 +11,7 @@ export const getClosenessRating = (distanceToTarget: number, farExtent = 20) => 
     )
 }
 
-export const getLineOverlap = (guessSuburbLines: (TramLines | MetroLines)[], targetSuburbLines: (TramLines | MetroLines)[]): PTVLineOverlap => {
+export const getLineOverlap = (guessSuburbLines: (MetroLines)[], targetSuburbLines: (MetroLines)[]): PTVLineOverlap => {
     const linesA = guessSuburbLines.map(line => line === "Williamstown" ? "Frankston" : line)
     const linesB = targetSuburbLines.map(line => line === "Williamstown" ? "Frankston" : line)
 
@@ -40,8 +40,8 @@ export const getLineOverlap = (guessSuburbLines: (TramLines | MetroLines)[], tar
     }
 }
 
-export const getLineColor = (line: (TramLines | MetroLines)) => {
-    const color = trainLineColorMap[line as MetroLines] ?? tramLineColorMap[line as TramLines]
+export const getLineColor = (line: (MetroLines)) => {
+    const color = trainLineColorMap[line as MetroLines]
 
     return color
 }

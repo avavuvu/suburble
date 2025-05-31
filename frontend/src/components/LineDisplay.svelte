@@ -61,7 +61,7 @@
         class="block line-clamp-2 rounded p-1 col-span-2"
         style:background-color={lineDisplay.backgroundColor}>
         <span class="italic text-center">
-            Not on the same tram or train line
+            Not on the same train line
         </span>
     </button>
 {:else}

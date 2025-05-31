@@ -12,7 +12,7 @@
     import { UAParser } from "ua-parser-js";
 
     const { device } = UAParser(window.navigator.userAgent)
-    const isDesktop = device.type === undefined || !['wearable', 'mobile'].includes(device.type);
+    const isDesktop = device.type === undefined || !['wearable', 'mobile', 'tablet'].includes(device.type);
 
     const suburbNames = (suburbNamesJson as unknown )as string[]
 
