@@ -27,7 +27,7 @@
 </div>
 
 
-<style>
+<style inline>
 
 .marquee {
         margin: 0px;

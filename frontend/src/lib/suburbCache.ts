@@ -1,9 +1,6 @@
 import Dexie from "dexie"
 import type { Table } from "dexie"
-import { openDB } from "idb"
-import type { Suburb } from "./types"
-import { PUBLIC_BASE_URL } from "$env/static/public"
-
+import type { Suburb } from "@t/suburb"
 
 class SuburbDatabase extends Dexie {
     suburbs!: Table<Suburb & { key: string }>
@@ -17,7 +14,6 @@ class SuburbDatabase extends Dexie {
     }
 }
 
-
 export class SuburbCache {
     suburbDatabase = new SuburbDatabase()
 
@@ -26,23 +22,31 @@ export class SuburbCache {
     }
 
     async get(suburbName: string): Promise<Suburb | null> {
-        let suburb = await this.suburbDatabase.suburbs.get(SuburbCache.normalizeSuburbName(suburbName))
+        if(suburbName === "") {
+            return null
+        }
+
+        suburbName = SuburbCache.normalizeSuburbName(suburbName)
+        let suburb = await this.suburbDatabase.suburbs.get(suburbName)
 
         //if suburb exists
         if(suburb) {
             return suburb as Suburb
         }
 
-        const suburbResponse = await fetch(`/api/suburb/${SuburbCache.normalizeSuburbName(suburbName)}.json`)
-        suburb = await suburbResponse.json()
+        const suburbResponse = await fetch(`/api/suburb/${suburbName}.json`)
+        const suburbData: {
+            ok: boolean,
+            suburb: Suburb
+        } = await suburbResponse.json()
 
-        if(!suburb) {
+        if(!suburbData.ok) {
             return null
         }
 
-        this.add(suburb)
+        this.add(suburbData.suburb)
 
-        return suburb as Suburb
+        return suburbData.suburb as Suburb
     }
 
     async add(suburb: Suburb) {

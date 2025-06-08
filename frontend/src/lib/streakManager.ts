@@ -1,6 +1,7 @@
 import type { Table } from "dexie"
 import Dexie from "dexie"
-import { gameState, type CorrectSuburb } from "./gameState.svelte"
+import type { GameInstance } from "./gameManager.svelte"
+import type { RevealData } from "@t/guess"
 
 class StreakDatabase extends Dexie {
     streak!: Table<Streak>
@@ -34,21 +35,26 @@ function getDayDistance(date1: Date, date2: Date): number {
 class StreakManager {
     database = new StreakDatabase()
 
-    async addGame(finalEntry: CorrectSuburb) {
-        const key = gameState.dateKey
+    async addGame(gameInstance: GameInstance, revealData: RevealData) {
+        const key = gameInstance.dateKey
 
-        const data = {
+        const data: Streak = {
             date: key,
-            win: finalEntry.didWin,
-            suburbName: finalEntry.suburb.name,
-            guesses: gameState.maxGuesses - finalEntry.guessesLeft
+            win: revealData.didWin,
+            suburbName: gameInstance.targetSuburb.name,
+            guesses: revealData.guesses
         }
 
-        await this.database.streak.put(data)
+        try {
+            await this.database.streak.put(data)
+        }
+        catch(e) {
+            console.error(e)
+        }
     }
 
     async hasPlayedToday(dateKey: string) {
-
+        
         const today = await this.database.streak.get(dateKey)
 
         return today ? true : false

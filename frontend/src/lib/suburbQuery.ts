@@ -1,7 +1,7 @@
-export class SuburbQuery {
-    suburbNames: string[]
+class SuburbQuery {
+    suburbNames!: string[]
     
-    constructor(suburbNames: string[]) {
+    init(suburbNames: string[]) {
         this.suburbNames = suburbNames
     }
 
@@ -19,3 +19,6 @@ export class SuburbQuery {
         this.suburbNames.find(name => input === name.toLowerCase())
 
 }
+
+const suburbQuery = new SuburbQuery()
+export default suburbQuery

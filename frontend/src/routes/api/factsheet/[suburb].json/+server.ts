@@ -1,17 +1,17 @@
 export const prerender = true
 
 import { SuburbCache } from "$lib/suburbCache"
-import type { Factsheet } from "$lib/types"
-import factsheetJson from "../../../../json/factsheet.json"
+import type { FactSheet } from "@t/faceSheet"
+import factSheetJson from "@j/factSheet.json"
 
-const factsheets = (factsheetJson as unknown) as Factsheet[]
+const factSheets = (factSheetJson as unknown) as FactSheet[]
 
 export const entries = () => {
-    return factsheets.map((suburb) => ({suburb: SuburbCache.normalizeSuburbName(suburb.name)}))
+    return factSheets.map((suburb) => ({suburb: SuburbCache.normalizeSuburbName(suburb.name)}))
 }
 
 export function GET({ params }) {
-    const suburb = factsheets.find(suburb => 
+    const suburb = factSheets.find(suburb => 
         SuburbCache.normalizeSuburbName(suburb.name) === SuburbCache.normalizeSuburbName(params.suburb))
     
     if(!suburb) {

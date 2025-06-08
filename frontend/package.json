@@ -27,14 +27,13 @@
 		"@sveltejs/adapter-static": "^3.0.8",
 		"@turf/distance": "^7.2.0",
 		"@turf/point-to-line-distance": "^7.2.0",
-		"@turf/turf": "^7.2.0",
-		"bun": "^1.2.8",
 		"dexie": "^4.0.11",
-		"gh-pages": "^6.3.0",
-		"idb": "^8.0.2",
 		"maplibre-gl": "^5.3.1",
-		"nanoevents": "^9.1.0",
 		"svelte-maplibre-gl": "^0.1.6",
-		"ua-parser-js": "^2.0.3"
+		"@turf/bearing": "^7.2.0",
+		"@types/canvas-confetti": "^1.9.0",
+		"canvas-confetti": "^1.9.3",
+		"fast-fuzzy": "^1.12.0",
+		"install": "^0.13.0"
 	}
 }

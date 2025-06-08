@@ -1,9 +1,8 @@
 export const prerender = true
 
 import { SuburbCache } from "$lib/suburbCache"
-import type { Suburb } from "$lib/types.js"
-import type { RouteParams } from "../$types"
-import suburbJson from "../../../../json/suburbs.json"
+import type { Suburb } from "@t/suburb"
+import suburbJson from "@j/suburbs.json"
 import type { EntryGenerator } from "./$types.js"
 const suburbs = (suburbJson as unknown) as Suburb[]
 
@@ -16,12 +15,20 @@ export function GET({ params }) {
         SuburbCache.normalizeSuburbName(suburb.name) === SuburbCache.normalizeSuburbName(params.suburb))
     
     if(!suburb) {
-        return new Response(JSON.stringify({error: "Unknown suburb"}), {
+        return new Response(JSON.stringify({
+            ok: false,
+            error: "Unknown suburb"
+        }), {
             headers: { 'Content-Type': 'application/json' },
         });
     }   
 
-    return new Response(JSON.stringify(suburb), {
-        headers: { 'Content-Type': 'application/json' },
-    });
+    return new Response(
+            JSON.stringify({
+            ok: true, 
+            suburb
+        }), {
+            headers: { 'Content-Type': 'application/json' },
+        }
+    );
 }
