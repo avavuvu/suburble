@@ -13,7 +13,7 @@
     <br>
 
     <p>
-        Suburble is a game about guessing Melbourne suburbs. I made Suburble for my friend Ria. She likes this game called <a class="link" href="https://trainle.fun">Trainle</a>, itself a game about guessing Melbourne train stations.
+        Suburble is a game about guessing Melbourne suburbs. I made Suburble for my friend Ria's birthday. She likes this game called <a class="link" href="https://trainle.fun">Trainle</a>, itself a game about guessing Melbourne train stations.
     </p>
     <p>
         It might seem like a big undertaking to make a game for a birthday, but anyone who knows Ria will understand how completely amazing and wonderful she is. I hope she has a lovely 21st :)

@@ -16,7 +16,9 @@ const wikidataHoleFiller: { [name: string]: EntityId } = {
 async function queryWikidataForFacts(suburbGeoJson: GeoJSON.FeatureCollection, options: {
     save: boolean
 }) {
-    const idChunks: idData[][] = suburbGeoJson.features.reduce<idData[][]>((accumulator, suburb) => {
+    const idChunks = suburbGeoJson.features
+        .reduce<idData[][]>((accumulator, suburb) => {
+
         if(suburb.properties && ("@relations" in suburb.properties)) {
             // this means its a label
             return accumulator

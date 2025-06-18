@@ -42,6 +42,7 @@ class MapManager {
 
     constructor(targetTrainLines: TrainLineName[]) {
         this.targetTrainLines = targetTrainLines
+
     }
 
     flyToSuburb (suburb: Suburb)  {

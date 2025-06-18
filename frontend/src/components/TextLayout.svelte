@@ -20,3 +20,7 @@
         {@render children()}
     </div>
 </main>
+
+<footer>
+    
+</footer>

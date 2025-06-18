@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { goto } from "$app/navigation";
+    import { dev } from "$app/environment";
     import { PUBLIC_API_URL, PUBLIC_BASE_URL } from "$env/static/public";
     import gameManager from "$lib/gameManager.svelte";
     import { SuburbCache, suburbCache } from "$lib/suburbCache";
@@ -8,10 +8,15 @@
     import InputForm from "@/InputForm.svelte";
     import Map from "@/Map.svelte";
     import ParCounter from "@/ParCounter.svelte";
+    import StartDialog from "@/StartDialog.svelte";
     import suburbNamesJson from "@j/suburbNames.json"
     import type { Suburb } from "@t/suburb";
-    import { onMount } from "svelte";
     const suburbNames = suburbNamesJson as string[]
+
+    const urlParams = new URLSearchParams(window.location.search)
+    const useRandomSuburb = urlParams.has("random") && dev
+
+    let open = $state(true)
 
     suburbQuery.init(suburbNames)
 
@@ -24,6 +29,19 @@
 
     async function startGame() {
         try {
+            if(useRandomSuburb) {
+                const suburb = await fetch(`${PUBLIC_BASE_URL}/api/suburb/${
+                    SuburbCache.normalizeSuburbName(suburbQuery.randomSuburb())
+                }.json`)
+                const response = await suburb.json()
+
+                console.log(response)
+
+                await gameManager.init(response.suburb, "2024-10-10")
+
+                return
+            }
+
             const {suburb, date} = await getTodaysSuburb()
             
             await gameManager.init(suburb.suburb, date)
@@ -38,8 +56,10 @@
         suburb: string,
         date: string
     }
-    
+
     const getTodaysSuburb = async () => {
+
+
         const response = await fetch(`${PUBLIC_API_URL}/today`)
         const today: APIResponse = await response.json()
 
@@ -51,8 +71,14 @@
 
 </script>
 
+<svelte:head>
+    <title>Suburble</title>
+</svelte:head>
+
+<StartDialog bind:open></StartDialog>
+
 {#if !error.error}
-    <div class="">
+    <main class="">
         {#await startGame()}
             <!-- loading... -->
         {:then _}
@@ -65,8 +91,13 @@
             <div id="feed" class="absolute bottom-[15vh] left-0 right-0">
 
                 <ParCounter/>
+                <!-- svelte-ignore a11y_consider_explicit_label -->
+                <button class="block p-2 border rounded-lg right-18 absolute -top-6 bg-white"
+                    onclick={() => open = true}> 
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-info-icon lucide-info"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+                </button>
                 <button class="block p-2 border rounded-lg right-5 absolute -top-6 bg-white"
-                onclick={() => gameManager.expanded = !gameManager.expanded}> 
+                    onclick={() => gameManager.expanded = !gameManager.expanded}> 
                     {#if gameManager.expanded}
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down-icon lucide-chevron-down"><path d="m6 9 6 6 6-6"/></svg>
                     {:else}
@@ -84,7 +115,7 @@
             </div>
         </div>
         {/await}
-    </div>
+    </main>
 {:else}
 <main class="flex justify-center place-items-center h-screen">
     <div class="block group bg-gray rounded-xl w-[230px] lg:w-[400px] border">
@@ -111,5 +142,8 @@
 {/if}
 
 <style>
-
+    main {
+        height: 100dvh;
+        height: 100svh;
+    }
 </style>

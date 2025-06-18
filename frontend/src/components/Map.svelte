@@ -14,17 +14,18 @@
 
     $effect(() => {
         gameManager.mapManager.map = map
+        map!.touchZoomRotate.disableRotation()
     })
 
     const trainLinesOnMapSorted = $derived(
         [...gameManager.mapManager.trainLinesOnMap]
-                .toSorted(([,lineA], [,lineB]) => {
-            let sortOrder = 0
-            if(lineA.color !== null && lineB.color === null) { sortOrder = 1 }
-            if(lineA.color === "green") { sortOrder = 1 }
-            
-            return sortOrder
-        }))
+            .toSorted(([,lineA], [,lineB]) => {
+                let sortOrder = 0
+                if(lineA.color !== null && lineB.color === null) { sortOrder = 1 }
+                if(lineA.color === "green") { sortOrder = 1 }
+                
+                return sortOrder
+            }))
     
 
 </script>
@@ -33,10 +34,10 @@
     class='w-full h-full'
     dragRotate={false}
     keyboard={false}
-    touchZoomRotate={false}
+    boxZoom={true}
+    pitchWithRotate={false}
     attributionControl={false}
     bind:map
-    
     style={mapLibreStyle}
     center={[144.96370394518178, -37.80899353983027]}
     zoom={11}>

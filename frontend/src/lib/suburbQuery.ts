@@ -6,7 +6,11 @@ class SuburbQuery {
     }
 
     getPlaceholder = () => {
-        return `${this.suburbNames[Math.floor(this.suburbNames.length * Math.random())]}...`
+        return `${this.randomSuburb()}...`
+    }
+
+    randomSuburb = () => {
+        return this.suburbNames[Math.floor(this.suburbNames.length * Math.random())]
     }
 
     getPotentialSuburbs = (input: string) => {
