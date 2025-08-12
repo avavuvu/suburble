@@ -17,5 +17,6 @@ export type FactSheet = {
     attribution?: {
         type: AttributionDeed,
         author: string
-    }
+    },
+    hasImage?: boolean
 }

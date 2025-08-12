@@ -48,9 +48,7 @@ class GameManager {
         const response = await fetch(`/api/factsheet/${SuburbCache.normalizeSuburbName(targetSuburb.name)}.json`)
         this.factSheet = await response.json()
 
-        const imageSource = `/images/suburbs/${targetSuburb.name.toLowerCase()}/${targetSuburb.name.toLowerCase()}.webp`
-        const imageResponse = await fetch(imageSource)
-        this.hasImage = imageResponse.ok
+        this.hasImage = this.factSheet.hasImage || false
         
         this.clueManager = new ClueManager(targetSuburb)
         this.mapManager = new MapManager(targetSuburb.trainLines)

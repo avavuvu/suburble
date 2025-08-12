@@ -8,17 +8,15 @@
 
     import mixpanel from "mixpanel-browser"
 
-    const onclick = () => {
-        mixpanel.track("Page View", {
-            "Page Name": "Lander"
-        })
-    }
+    // const onclick = () => {
+    //     mixpanel.track("Page View", {
+    //         "Page Name": "Lander"
+    //     })
+    // }
 
     const formatDate = (date: Date) => 
         `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
 </script>
-
-<button {onclick}>track</button>
 
 <svelte:head>
     <title>Suburble</title>

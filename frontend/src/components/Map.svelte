@@ -19,7 +19,7 @@
 
     const trainLinesOnMapSorted = $derived(
         [...gameManager.mapManager.trainLinesOnMap]
-            .toSorted(([,lineA], [,lineB]) => {
+            .sort(([,lineA], [,lineB]) => {
                 let sortOrder = 0
                 if(lineA.color !== null && lineB.color === null) { sortOrder = 1 }
                 if(lineA.color === "green") { sortOrder = 1 }
@@ -49,7 +49,7 @@
 
         <GeoJSONSource data={geoJson}>
             <LineLayer paint={{
-                'line-color': color ?? "transparent",
+                'line-color': color || "transparent",
                 'line-width': 4,
                 'line-opacity': color === null 
                     ? 0
@@ -73,7 +73,7 @@
                 {#snippet content()}
                     <div class="flex justify-center flex-col items-center">
                         <div class="w-min text-3xl rotate-0" 
-                            style:transform={`rotate(${emoji.direction + (emoji.offset ?? 0)}deg)`}>
+                            style:transform={`rotate(${emoji.direction + (emoji.offset || 0)}deg)`}>
                             {emoji.emoji}
                         </div>
                         <div class="text-gray-700">

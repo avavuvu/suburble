@@ -38,80 +38,85 @@ import filterHousePrices from "./commands/filterHousePrices"
 import queryWikidataForFacts from "./commands/queryWikidataForFacts"
 import { imageAttribution } from "./consts/attribution"
 import directionFromCBD from "./commands/directionFromCBD"
+import checkForImages from "./commands/checkForImages"
 
 // Suburbs
 const suburbs = deriveSuburbsFromGeoJson(suburbGeoJsonFile as FeatureCollection)
 
-const trainLines = deriveTrainLinesFromGeoJson(trainGeoJsonFile as FeatureCollection, {
-    returnGeoJson: false,
-    debugProperties: false
-}) as TrainLine[]
+// const trainLines = deriveTrainLinesFromGeoJson(trainGeoJsonFile as FeatureCollection, {
+//     returnGeoJson: false,
+//     debugProperties: false
+// }) as TrainLine[]
 
-type LinesAccumulator = {
-    linesToSplit: TrainLine[];
-    otherLines: TrainLine[];
-}
+// type LinesAccumulator = {
+//     linesToSplit: TrainLine[];
+//     otherLines: TrainLine[];
+// }
 
-const { linesToSplit, otherLines } = trainLines.reduce<LinesAccumulator>(
-    (acc, trainLine) => {
-        if (["Frankston", "Williamstown", "Altona Loop"].includes(trainLine.name)) {
-            acc.linesToSplit.push(trainLine);
-        } else {
-            acc.otherLines.push(trainLine);
-        }
-        return acc;
-    },
-    { linesToSplit: [], otherLines: [] }
-);
+// const { linesToSplit, otherLines } = trainLines.reduce<LinesAccumulator>(
+//     (acc, trainLine) => {
+//         if (["Frankston", "Williamstown", "Altona Loop"].includes(trainLine.name)) {
+//             acc.linesToSplit.push(trainLine);
+//         } else {
+//             acc.otherLines.push(trainLine);
+//         }
+//         return acc;
+//     },
+//     { linesToSplit: [], otherLines: [] }
+// );
 
-// Maybe this could be one operation if the API for splitAtFlindersSt just wanted one line
-const splitLines = splitAtFlindersSt(
-    linesToSplit,
-    { direction: "east", name: "Frankston" }
-)
+// // Maybe this could be one operation if the API for splitAtFlindersSt just wanted one line
+// const splitLines = splitAtFlindersSt(
+//     linesToSplit,
+//     { direction: "east", name: "Frankston" }
+// )
 
-const allTrainLines = otherLines.concat(splitLines)
+// const allTrainLines = otherLines.concat(splitLines)
 
-const assignedSuburbs = assignTrainLinesToSuburbs(
-    suburbs, 
-    allTrainLines, 
-    {
-        exclusionCutoff: 4,
-        suburbCutoff: 2,
-        innerCityCutoff: 5.5,
-        cityCutoff: 1.5,
-        overrides: {
-            "Glen Iris": ["Alamein", "Glen Waverley"],
-            "Camberwell": ["Alamein", "Belgrave", "Lilydale"],
-            "Bundoora": ["Hurstbridge"],
-            "Fitzroy": ["Mernda", "Hurstbridge"],
-            "Altona": ["Altona Loop", "Werribee"],
-            "Altona North": ["Altona Loop", "Werribee"],
-            "Williamstown": ["Williamstown"]
-        }
-    })
+// const assignedSuburbs = assignTrainLinesToSuburbs(
+//     suburbs, 
+//     allTrainLines, 
+//     {
+//         exclusionCutoff: 4,
+//         suburbCutoff: 2,
+//         innerCityCutoff: 5.5,
+//         cityCutoff: 1.5,
+//         overrides: {
+//             "Glen Iris": ["Alamein", "Glen Waverley"],
+//             "Camberwell": ["Alamein", "Belgrave", "Lilydale"],
+//             "Bundoora": ["Hurstbridge"],
+//             "Fitzroy": ["Mernda", "Hurstbridge"],
+//             "Altona": ["Altona Loop", "Werribee"],
+//             "Altona North": ["Altona Loop", "Werribee"],
+//             "Williamstown": ["Williamstown"]
+//         }
+//     })
 
 // Fact Sheet
 const populations = await queryWikidataForFacts(suburbGeoJsonFile as FeatureCollection, { save: true })
-const etymologies = await filterEtymologies(assignedSuburbs, { save: true })
-const housePrices = await filterHousePrices(assignedSuburbs, { save: true })
+const etymologies = await filterEtymologies(suburbs, { save: true })
+const housePrices = await filterHousePrices(suburbs, { save: true })
+const images = await checkForImages(suburbs, {
+    imageFolder: "./downloads"
+})
 
-const factSheet = assignedSuburbs.map(({name}) => {
+const factSheet = suburbs.map(({name}) => {
     const key = name.toLowerCase()
     const population = populations[key]?.population
     const etymology = etymologies[key]
     const housePrice = housePrices[key]?.price
     const attribution = imageAttribution[key]
+    const hasImage = images[key]
 
     return {
         name: key,
-        population, etymology, housePrice, attribution
+        population, etymology, housePrice, attribution, 
+        ...hasImage
     }
 })
 
-const suburbsWithLangugageOfOrigin = assignedSuburbs.map((suburb) => {
+const suburbsWithLangugageOfOrigin = suburbs.map((suburb) => {
     const etymology = etymologies[suburb.name.toLowerCase()]?.language
-    console.log
 
     return {
         ...suburb,
@@ -124,9 +129,9 @@ const suburbsWithDirection = directionFromCBD(suburbsWithLangugageOfOrigin)
 
 
 await Bun.write(`./output/final/factSheet.json`, JSON.stringify(factSheet))
-await Bun.write(`./output/final/trainLines.json`, JSON.stringify(allTrainLines))
-await Bun.write(`./output/final/suburbs.json`, JSON.stringify(suburbsWithDirection))
-await Bun.write(`./output/final/suburbNames.json`, JSON.stringify(assignedSuburbs.map(({name}) => name)))
+// await Bun.write(`./output/final/trainLines.json`, JSON.stringify(allTrainLines))
+// await Bun.write(`./output/final/suburbs.json`, JSON.stringify(suburbsWithDirection))
+// await Bun.write(`./output/final/suburbNames.json`, JSON.stringify(assignedSuburbs.map(({name}) => name)))
 
 
     

@@ -83,7 +83,7 @@
             <!-- loading... -->
         {:then _}
 
-        <div class="relative h-screen" class:expanded={gameManager.expanded}>
+        <div class="relative game" class:expanded={gameManager.expanded}>
             <div id="map" class="h-[calc(100%-15vh)]">
                 <Map />
             </div>
@@ -142,7 +142,7 @@
 {/if}
 
 <style>
-    main {
+    .game {
         height: 100dvh;
         height: 100svh;
     }

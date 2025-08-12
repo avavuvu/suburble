@@ -58,7 +58,7 @@ function assignTrainLinesToSuburbs(
                     distance
                 }
             })
-            .toSorted((trainLineA, trainLineB) => trainLineA.distance - trainLineB.distance)
+            .sort((trainLineA, trainLineB) => trainLineA.distance - trainLineB.distance)
 
         if(trainLinesWithDistances.every(({distance}) => distance > exclusionCutoff)) {
             return null
