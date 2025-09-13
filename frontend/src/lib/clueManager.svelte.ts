@@ -15,9 +15,12 @@ const suburbNameParts = [
     "park",
     "vale",
     "bourne",
+    "dale",
+    "lyn",
     "mount",
     "mont",
     "wood",
+    "port",
     "glen",
     "bank",
     "downs",
@@ -25,7 +28,8 @@ const suburbNameParts = [
     "borough",
     "spring",
     "ton",
-    "land"
+    "land",
+    "burg",
 ] as const
 
 export type ClueTypes = "etymology" | "starts with" | "contains" | "word count" | "direction" | "random letters"
@@ -120,10 +124,10 @@ export class ClueManager {
         // Check for priority clues in order of preference
         const priorityOrder: ClueTypes[] = [
             "direction", 
-            "contains", // a suburb name will very rarely come from an indigious name, and contain one of the listed parts
             "etymology",
-            
-            "starts with"
+            "contains", // a suburb name will very rarely come from an indigious name, and contain one of the listed parts
+            "starts with",
+            "random letters",
         ];
         
         for (const clueType of priorityOrder) {

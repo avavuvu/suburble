@@ -5,6 +5,7 @@
     import Share from "./Share.svelte";
     import gameManager from "$lib/gameManager.svelte";
     import { attribution } from "@t/faceSheet";
+  import { slide } from "svelte/transition";
 
 
     const { feedItem }: { feedItem: FeedReveal } = $props()
@@ -14,7 +15,7 @@
 
     // add one because the reveal counts as an extra guess
     // kind of dodgy code
-    const guesses = feedItem.revealData.guesses + Number(didWin)
+    const guesses = feedItem.revealData.guesses + (didWin ? 1 : 0)
 
     const trainLines = new Map<TrainLineName,GoodnessColor>(suburb.trainLines.map(trainLine => [trainLine,"green"]))
 
@@ -22,7 +23,9 @@
 
 </script>
 
-<div class="rounded grid grid-cols-2 gap-2 p-2 mt-8 flex-1">
+<div 
+    transition:slide={{ delay: 1000 }}
+    class="rounded grid grid-cols-2 gap-2 p-2 mt-8 flex-1">
     <div class=" p-2 rounded text-center col-span-2"  >
         <div class="font-bold text-2xl ">{suburb.name}</div>
         <div>{didWin 

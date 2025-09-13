@@ -5,13 +5,11 @@
 
 </script>
 
-<div class="w-[90%] mx-auto h-6" >
+<div class="w-[90%] mx-auto h-12 text-center flex flex-col justify-center" >
     {#if gameManager.guesses.size > 2 && !gameManager.gameEnded}
-        
-
+        <div class="text-sm">Mistakes remaining:</div>
         <svg 
             transition:slide
-            width="100%" height="100%" 
             viewBox="0 0 {gameManager.maxGuesses} 1">
             {#each {length: gameManager.maxGuesses}, index }
                 <g transform={`translate(${index}, 0)`}>

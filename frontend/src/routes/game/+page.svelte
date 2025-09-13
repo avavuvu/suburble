@@ -27,6 +27,8 @@
         error: false,
     })
 
+    
+
     async function startGame() {
         try {
             if(useRandomSuburb) {
@@ -117,6 +119,7 @@
         {/await}
     </main>
 {:else}
+
 <main class="flex justify-center place-items-center h-screen">
     <div class="block group bg-gray rounded-xl w-[230px] lg:w-[400px] border">
         <a data-sveltekit-reload  href="/">

@@ -23,8 +23,6 @@ class FeedManager {
 
     delayRevealTimeMs = 2000
 
-
-
     #addFeedItem(feedItem: FeedGuess | FeedClue | FeedReveal, delay: boolean = false) {
         const keyedFeedItem = {
             ...feedItem,
@@ -43,7 +41,7 @@ class FeedManager {
         this.feed.unshift(keyedFeedItem);
     }
 
-    addGuess(guess: IncorrectGuess) {
+    addIncorrectGuess(guess: IncorrectGuess) {
         const feedItem: FeedGuess = {
             type: "guess",
             guess,

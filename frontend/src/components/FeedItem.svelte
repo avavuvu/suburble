@@ -16,7 +16,7 @@
     const animateInTimeMs = 400 as const
 </script>
 
-<li transition:slide class="rounded border border-black overflow-clip p-1 my-2 shrink-0" >
+<li transition:slide class="rounded border bg-white border-black overflow-clip p-1 my-2 shrink-0" >
     {#if feedItem.type === "guess"}
         {@const { emojiDirection, cardinalToTarget, distanceToTarget, directionToTarget } = feedItem.guess.directionInfo}
         {@const goodness = feedItem.guessComponentsGoodness}

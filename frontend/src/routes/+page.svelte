@@ -1,18 +1,7 @@
 <script lang="ts">
-    import suburbNamesJson from "../json/suburbNames.json"
-    const suburbNames = (suburbNamesJson as unknown ) as string[]
-
     import Lander from "../components/Lander.svelte";
     import { dev } from "$app/environment";
     import { streakManager } from "$lib/streakManager";
-
-    import mixpanel from "mixpanel-browser"
-
-    // const onclick = () => {
-    //     mixpanel.track("Page View", {
-    //         "Page Name": "Lander"
-    //     })
-    // }
 
     const formatDate = (date: Date) => 
         `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
@@ -23,6 +12,7 @@
 </svelte:head>
 
 <Lander>
+
     {#if dev}
         <a 
             class="block group cursor-pointer bg-white border rounded-xl w-[230px] lg:w-[400px] text-center m-12 p-4"

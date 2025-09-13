@@ -123,21 +123,17 @@
         
         await gameManager.attemptGuess(guessString)
     }
-
-
-
 </script>
 
 <svelte:window {onkeydown}></svelte:window>
 
-<div class="relative">
-
+<div class="relative bg-white">
     {#if isSelectableSuburbs}
         <div transition:slide 
             id="suburb-list"
             bind:this={suburbList}
             class="absolute h-48 w-full bottom-14 overflow-scroll p-2
-                rounded shadow-2xl text-xl bg-gray-100">
+                rounded shadow-2xl text-xl bg-white">
             {#each potentialSuburbs as suburb}
                 <button
                     onfocusout={() => isSuburbButtonFocused = false}
@@ -149,7 +145,7 @@
                     }
                     class="
                         suburb-button
-                        block my-1 py-1 bg-white w-full rounded cursor-pointer
+                        block my-1 py-1 bg-gray-white w-full rounded cursor-pointer
                         hover:bg-gray-100 transition-colors 
                         active:bg-gray-300 focus:bg-gray-300
                         [.only-option]:bg-gray-300">
@@ -160,43 +156,43 @@
         </div>
     {/if}
 
-    <form class="grid grid-cols-1 grid-rows-1 border border-black w-full rounded overflow-clip
+    <form class="grid grid-cols-2 grid-rows-1 border border-black w-full rounded overflow-clip
         focus-within:outline-1 focus-within:outline-blue">
-        {#if !gameManager.clueManager.clueStore}
-            <div class="col-start-1 col-end-1 row-start-1 row-end-2
-                    inline-flex justify-between w-full">
-                <input 
-                    bind:this={formInput}
-                    bind:focused={isFormFocused}
-                    bind:value={inputValue}
-                    type="text"
-                    placeholder={gameManager.gameEnded ? "" : suburbQuery.getPlaceholder()}
-                    autocomplete="off"
-                    oninput={inputChanged}
-                    onsubmit={() => makeGuess()}
-                    disabled={gameManager.gameEnded}
-                    class="w-full flex-1 px-2 h-10 disabled:bg-gray">
-                <button 
-                    disabled={gameManager.gameEnded}
-                    class=" green px-2"
-                    onclick={() => makeGuess()}>Guess!</button>
-            </div>
-        {:else}
+        <div class="col-start-1 col-end-3 row-start-1 row-end-2
+                inline-flex justify-between w-full">
+            <input 
+                bind:this={formInput}
+                bind:focused={isFormFocused}
+                bind:value={inputValue}
+                type="text"
+                placeholder={gameManager.gameEnded ? "" : suburbQuery.getPlaceholder()}
+                autocomplete="off"
+                oninput={inputChanged}
+                onsubmit={() => makeGuess()}
+                disabled={gameManager.gameEnded}
+                class="w-full flex-1 px-2 h-10 disabled:bg-gray">
+            <button 
+                disabled={gameManager.gameEnded}
+                class="green px-2"
+                onclick={() => makeGuess()}>Guess!</button>
+        </div>
+
+        {#if gameManager.clueManager.clueStore && !gameManager.gameEnded}
             <div 
                 transition:fly
-                class="col-start-1 col-end-1 row-start-1 row-end-2
+                class="col-start-2 col-end-3 row-start-1 row-end-2
                     inline-flex justify-between w-full">
                 <button 
                     placeholder={suburbQuery.getPlaceholder()}
                     oninput={inputChanged}
                     onclick={() => gameManager.clueManager.unloadClue(true)}
-                    class="w-full flex-1 px-2 h-10 bg-red-400 text-white">
+                    class="w-full flex-1 px-2 h-10 bg-red-400 text-sm text-white">
                     {gameManager.clueManager.clueStore.revealText}
                 </button>
                 <button 
                     class="text-red-400 bg-white  px-2"
                     onclick={() => gameManager.clueManager.unloadClue(false)}>
-                    Skip Clue
+                    Skip
                 </button>
 
             </div>

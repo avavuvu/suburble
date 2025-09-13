@@ -16,12 +16,12 @@
 
 </script>
 
-<div class="bg-white">
+<div class="bg-gray-100">
     <ul 
         class:expanded={gameManager.expanded}
         bind:this={guessList}
         id="guess-list"  
-        class=" overflow-y-auto flex flex-col-reverse gap-4 lg:gap-2 w-[90%] max-w-[600px] mx-auto pt-1">
+        class=" overflow-y-auto flex flex-col-reverse gap-4 pb-8 lg:gap-2 w-[90%] max-w-[600px] mx-auto pt-1">
 
         {#each feedManager.feed as feedItem (feedItem.key)}
             <FeedItem {feedItem} {scrollToBottom}/>

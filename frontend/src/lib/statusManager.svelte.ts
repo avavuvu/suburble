@@ -49,17 +49,17 @@ class StatusManager {
     setStatus(statusItem: StatusItem) {
         this.status.set(statusItem)
 
-        return
-        switch(statusItem.type) {
-            case "did you mean":
+        // return
+        // switch(statusItem.type) {
+        //     case "did you mean":
                 
 
-                break
-            case 'not found':
+        //         break
+        //     case 'not found':
 
 
-                break;
-        }
+        //         break;
+        // }
     }
 }
 

@@ -6,24 +6,26 @@
     const { feedItem }: { feedItem: FeedReveal } = $props()
     const { didWin, guesses } = feedItem.revealData
 
+    const guessesWithWin = guesses + (didWin ? 1 : 0)
+
     let buttonText = $state("Share!")
 
     const onclick = () => {
   
         let text = didWin 
-            ? `I found today's Suburb in ${guesses} guess${guesses === 1 ? "" : "es"}!`
+            ? `I found today's Suburb in ${guessesWithWin} guess${guessesWithWin === 1 ? "" : "es"}!`
             : `I couldn't crack today's Suburble! Can you?`
-
-        text += ` https://suburble.melbourne`;
 
         if(window.navigator) {
             if(window.navigator.share) {
                 window.navigator.share({
-                    text,
+                    url: "https://suburble.melbourne",
+                    text, 
                 })
 
             } else {
                 buttonText = "Copied to Clipboard"
+                text += ` https://suburble.melbourne`
                 window.navigator.clipboard.writeText(text)
 
             }

@@ -3,15 +3,15 @@ import type { Suburb } from "@t/suburb"
 import getDirectionInformation from "./utils/getDirectionInformation"
 import { SuburbCache, suburbCache } from "./suburbCache"
 import feedManager from "./feedManager.svelte"
-import { get } from "svelte/store"
 import { SvelteMap } from "svelte/reactivity"
 import suburbNameSearcher from "./queryUtils/fastFuzzy"
 import statusManager from "./statusManager.svelte"
-import { ClueManager, getClues, type Clues, type ClueTypes } from "./clueManager.svelte"
+import { ClueManager } from "./clueManager.svelte"
 import MapManager from "./mapManager.svelte"
 import type { FactSheet } from "@t/faceSheet"
 import confetti from "canvas-confetti"
 import { streakManager } from "./streakManager"
+import mixpanel from "mixpanel-browser"
 
 export type GameInstance = {
     targetSuburb: Suburb,
@@ -23,7 +23,7 @@ class GameManager {
     guesses: SvelteMap<string, IncorrectGuess> = new SvelteMap([])
     clueManager!: ClueManager
     mapManager!: MapManager
-    maxGuesses: number = 8
+    maxGuesses: number = 5
     factSheet!: FactSheet
     hasImage: boolean = false
     expanded: boolean = $state(false)
@@ -52,6 +52,8 @@ class GameManager {
         
         this.clueManager = new ClueManager(targetSuburb)
         this.mapManager = new MapManager(targetSuburb.trainLines)
+
+        mixpanel.track("Game Start")
     }
 
     addGuess(suburb: Suburb) {
@@ -71,9 +73,9 @@ class GameManager {
                 suburb
             }
 
-            feedManager.addGuess(newGuess)
+            feedManager.addIncorrectGuess(newGuess)
 
-            if(this.guesses.size === 1 || this.guesses.size === 3 || this.guesses.size === 5  || this.guesses.size === 7) {
+            if(this.guesses.size === 1 || this.guesses.size === 3 || this.guesses.size === 5  || this.guesses.size === 6) {
                 let clue = this.clueManager.getPriorityClue()
                 if(!clue) {
                     clue = this.clueManager.getAnyClue()
@@ -96,7 +98,8 @@ class GameManager {
                 type: "guess",
                 bestGuess: this.bestGuess || newGuess,
                 guess: newGuess,
-                suburbName: suburb.name
+                suburbName: suburb.name,
+                shake: false
             })
 
             this.guesses.set(SuburbCache.normalizeSuburbName(suburb.name), newGuess)
@@ -210,6 +213,12 @@ class GameManager {
             this.gameInstance,
             revealData
         )
+
+        mixpanel.track("Game Complete", {
+            win: didWin,
+            guesses: [...this.guesses].map(([_, guesss]) => guesss.suburb.name),
+            guessesUsed: this.guesses.size + (didWin ? 1 : 0)
+        })
     }
 }
 

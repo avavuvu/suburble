@@ -56,7 +56,7 @@
                 <br>
             {:then streak}
                 {#if streak.count === 1}
-                    <p>You solved {streak.dayDistance === 0 ? "today" : "yesterday"}'s Suburble in {streak.streaks[0].guesses} {streak.streaks[0].guesses === 1 ? "guess" : "guesses"}! 🔥</p>
+                    <p>You solved {streak.dayDistance === 0 ? "today" : "yesterday"}'s Suburble in {streak.streaks[0].guesses + 1} {streak.streaks[0].guesses + 1 === 1 ? "guess" : "guesses"}! 🔥</p>
                     {#if streak.dayDistance === 1}
                         <p>Can you solve today's Suburble in {streak.streaks[0].guesses - 1}⁉️</p>
                     {/if}

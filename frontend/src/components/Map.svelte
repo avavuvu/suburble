@@ -44,7 +44,6 @@
 
     <AttributionControl position={"top-left"} compact/>
 
-
     {#each trainLinesOnMapSorted as [name, {geoJson, color}]}
 
         <GeoJSONSource data={geoJson}>
