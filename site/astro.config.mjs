@@ -12,11 +12,13 @@ export default defineConfig({
   }),
   output: 'static',
   vite: {
+    // @ts-expect-error
     plugins: [tailwindcss()],
   },
   env: {
     schema: {
       PUBLIC_MIXPANEL_TOKEN: envField.string({ context: 'client', access: 'public', optional: true }),
+      BUILD_HOOK_URL: envField.string({ context: 'server', access: 'secret', optional: false }),
     }
   },
   
