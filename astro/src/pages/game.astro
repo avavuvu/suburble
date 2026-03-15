@@ -1,0 +1,15 @@
+---
+import GameLayout from "../layouts/GameLayout.astro";
+import GamePage from "@/GamePage.svelte";
+import { dates } from "@j/dates.json";
+import suburbJson from "@j/suburbs.json";
+
+const today = new Date().toISOString().split("T")[0] as keyof typeof dates;
+const suburbName = dates[today];
+
+const suburb = suburbJson.find((suburb) => suburb.name === suburbName)! as any;
+---
+
+<GameLayout title="Play Suburble">
+    <GamePage suburb={suburb} date={today} client:only="svelte" />
+</GameLayout>

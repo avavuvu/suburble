@@ -1,0 +1,79 @@
+---
+import PageLayout from "../layouts/PageLayout.astro";
+---
+
+<PageLayout title="About Suburble" description="Learn more about Suburble">
+    <article>
+        <h1 class="font-bold text-2xl">About Suburble</h1>
+        <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2">
+            <div>
+                <p>
+                    Suburble is a game about guessing Melbourne suburbs. I made
+                    Suburble for my friend Ria's birthday. She likes this game
+                    called <a class="link" href="https://trainle.fun">Trainle</a
+                    >, itself a game about guessing Melbourne train stations.
+                </p>
+                <p>
+                    It might seem like a big undertaking to make a game for a
+                    birthday, but anyone who knows Ria will understand how
+                    completely amazing and wonderful she is. I hope she has a
+                    lovely 21st :)
+                </p>
+
+                <p class="italic">
+                    If you like Suburble, and would like to have a chat or give
+                    me a job,
+                    <a class="link" href="mailto:avadinhvu@gmail.com"
+                        >send me an email.</a
+                    >
+                </p>
+
+                <h3 class="font-bold">Other Games</h3>
+                <p>
+                    If you like Suburble, you might enjoy one of my <a
+                        class="link"
+                        href="https://crossword.blue">crosswords</a
+                    >.
+                </p>
+            </div>
+            <div>
+                <img src="/assets/me_and_ria.webp" alt="Me and Ria" />
+            </div>
+        </section>
+
+        <section>
+            <h2 class="font-bold">Legal</h2>
+            <p>
+                This game uses geographic data from Open Street Maps. Etymology
+                comes from <a
+                    class="link"
+                    href="https://maps.philipmallis.com/melbourne-suburb-names-etymology/"
+                    >VicNames via the amazing Philip Mallis.</a
+                > Housing prices come from the <a
+                    class="link"
+                    href="https://www.land.vic.gov.au/valuations/resources-and-reports/property-sales-statistics"
+                >
+                    Victorian government.</a
+                > Population comes from the census via Wikidata. All images are public
+                domain unless otherwise stated.
+            </p>
+        </section>
+
+        <section>
+            <h2 class="font-bold">Technical</h2>
+            <p>
+                This website was built using Astro and Svelte. The map is made
+                with MapLibreGL and <a
+                    class="link"
+                    href="https://openfreemap.org/">Open Free Map.</a
+                >
+            </p>
+        </section>
+    </article>
+</PageLayout>
+
+<style>
+    p {
+        padding-bottom: 1rem;
+    }
+</style>

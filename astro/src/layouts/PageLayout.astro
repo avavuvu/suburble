@@ -1,0 +1,17 @@
+---
+import BaseLayout from "./BaseLayout.astro";
+import TextLayout from "@/TextLayout.svelte";
+
+interface Props {
+    title: string;
+    description?: string;
+}
+
+const { title, description } = Astro.props;
+---
+
+<BaseLayout title={title} description={description}>
+    <TextLayout client:load>
+        <slot />
+    </TextLayout>
+</BaseLayout>
