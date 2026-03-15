@@ -1,0 +1,35 @@
+@import 'tailwindcss';
+
+@theme {
+    --max-width-main: 1280px;
+    --font-mono: 'Courier New', Courier, monospace;
+    --color-green: #4e8a4f;
+    --color-yellow: var(--color-amber-400);
+    --color-gray: var(--color-gray-200);
+    --color-blue: var(--color-blue-500);
+    --color-red: var(--color-red-400);
+}
+
+button {
+    cursor: pointer;
+}
+
+.link {
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+/* Correctness */
+
+.gray {
+    background-color: var(--color-gray);
+}
+
+.green {
+    background-color: var(--color-green);
+    color: var(--color-white);
+}
+
+.yellow {
+    background-color: var(--color-yellow)
+}

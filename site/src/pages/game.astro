@@ -1,0 +1,29 @@
+---
+import GameLayout from "../layouts/GameLayout.astro";
+import GamePage from "@/GamePage.svelte";
+import { dates } from "@j/dates.json";
+import suburbJson from "@j/suburbs.json";
+import type { Suburb } from "@t/suburb";
+
+const parts = new Intl.DateTimeFormat("en-AU", {
+    timeZone: "Australia/Melbourne",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+}).formatToParts();
+
+const { year, month, day } = Object.fromEntries(
+    parts.map((p) => [p.type, p.value]),
+);
+const dateKey = `${year}-${month}-${day}` as keyof typeof dates;
+
+const suburbName = dates[dateKey];
+
+const suburb = suburbJson.find(
+    (suburb) => suburb.name === suburbName,
+)! as Suburb;
+---
+
+<GameLayout title="Play Suburble">
+    <GamePage suburb={suburb} date={dateKey} client:only="svelte" />
+</GameLayout>

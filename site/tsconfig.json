@@ -1,0 +1,30 @@
+{
+  "extends": "astro/tsconfigs/strict",
+  "include": [
+    ".astro/types.d.ts",
+    "**/*"
+  ],
+  "exclude": [
+    "dist"
+  ],
+  "compilerOptions": {
+    "target": "es2022",
+    "useDefineForClassFields": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": [
+        "src/components/*"
+      ],
+      "@t/*": [
+        "src/lib/types/*"
+      ],
+      "@j/*": [
+        "src/lib/json/*"
+      ],
+      "@lib/*": [
+        "src/lib/*"
+      ]
+    },
+    "resolveJsonModule": true
+  }
+}
