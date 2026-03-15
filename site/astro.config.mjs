@@ -12,7 +12,6 @@ export default defineConfig({
   }),
   output: 'static',
   vite: {
-    // @ts-expect-error
     plugins: [tailwindcss()],
   },
   env: {
@@ -21,5 +20,4 @@ export default defineConfig({
       BUILD_HOOK_URL: envField.string({ context: 'server', access: 'secret', optional: false }),
     }
   },
-  
 });
