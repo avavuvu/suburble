@@ -47,11 +47,12 @@ class MapManager {
 
     flyToSuburb(suburb: Suburb) {
         if (!this.map) {
-            throw new Error("Map is undefined!")
+            return
         }
 
         this.map.flyTo({
-            center: suburb.centroid,
+            center: [suburb.centroid[0], suburb.centroid[1]],
+            // ^ this just fixes type error, you can just do suburb.centroid
             speed: .6,
             offset: [0, -50],
             zoom: 12

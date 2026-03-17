@@ -1,9 +1,2 @@
-export type Cardinal = 
-    | "North" 
-    | "South" 
-    | "East" 
-    | "West" 
-    | "North-West"
-    | "South-West"
-    | "North-East"
-    | "South-East"
+// Re-export from shared package - this is the single source of truth
+export type { Cardinal } from "suburble-shared"

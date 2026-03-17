@@ -2,7 +2,6 @@
     import type { FeedItem } from "@t/feed";
     import { slide } from "svelte/transition";
     import TrainLineDisplay from "./TrainLineDisplay.svelte";
-    import feedManager from "@lib/feedManager.svelte.ts";
     import { onMount } from "svelte";
     import Reveal from "./Reveal.svelte";
 
@@ -14,27 +13,24 @@
         scrollToBottom: () => void;
     } = $props();
 
-    onMount(scrollToBottom);
+    onMount(() => scrollToBottom());
 
     const animateInTimeMs = 400 as const;
 </script>
 
 <li
     transition:slide
+    class:shake={feedItem.type === "guess" && feedItem.isLastGuess}
     class="rounded border bg-white border-black overflow-clip p-1 my-2 shrink-0"
 >
     {#if feedItem.type === "guess"}
-        {@const {
-            emojiDirection,
-            cardinalToTarget,
-            distanceToTarget,
-            directionToTarget,
-        } = feedItem.guess.directionInfo}
+        {@const { emojiDirection, distanceToTarget, directionToTarget } =
+            feedItem.guess.directionInfo}
         {@const goodness = feedItem.guessComponentsGoodness}
         <div class="grid grid-cols-2 grid-rows-[auto_auto] gap-2 flex-1 w-full">
             <div
                 class="
-                {goodness.distanceToTarget} 
+                {feedItem.isLastGuess ? 'red' : goodness.distanceToTarget} 
                 font-bold p-1 rounded text-center"
             >
                 <span>{feedItem.guess.suburb.name}</span>
@@ -92,7 +88,7 @@
 
 <style>
     .animate-in {
-        animation: animate-in 0.2s ease-in-out forwards;
+        animation: animate-in 0.1s ease-in-out forwards;
         opacity: 0;
     }
 
@@ -104,6 +100,25 @@
         100% {
             transform: translateY(0%);
             opacity: 1;
+        }
+    }
+
+    .shake {
+        animation: shake 0.2s ease-in-out 0s 2;
+    }
+
+    @keyframes shake {
+        0% {
+            margin-left: 0rem;
+        }
+        25% {
+            margin-left: 1rem;
+        }
+        75% {
+            margin-left: -1rem;
+        }
+        100% {
+            margin-left: 0rem;
         }
     }
 </style>

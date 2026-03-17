@@ -9,6 +9,7 @@
     "astro": "astro"
   },
   "dependencies": {
+    "suburble-shared": "workspace:*",
     "@astrojs/check": "^0.9.7",
     "@astrojs/netlify": "^7.0.2",
     "@astrojs/svelte": "^8.0.0",

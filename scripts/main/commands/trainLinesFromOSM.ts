@@ -1,12 +1,12 @@
 
 import type { Feature, FeatureCollection, GeoJsonProperties, LineString } from "geojson"
-import trainsGeoJson from "../../geoJson/trains.geo.json"
-import { 
-    simplify, 
+import {
+    simplify,
     lineString as createLineString,
-    featureCollection as createFeatureCollection, 
+    featureCollection as createFeatureCollection,
     center as findCenter,
-    bearing as findBearing,} from "@turf/turf"
+    bearing as findBearing,
+} from "@turf/turf"
 import type { OSMTrainProperties, TrainLine, TrainLineName } from "../types/trainTypes"
 import routeToLineMap from "../consts/routeToLineMap"
 import trainLineColorMap from "../consts/trainColors"
@@ -17,18 +17,19 @@ interface DeriveTrainLineOptions {
 }
 
 function deriveTrainLinesFromGeoJson(
-    geoJson: GeoJSON.FeatureCollection, 
-    options: DeriveTrainLineOptions = { 
-        returnGeoJson: false ,
+    geoJson: GeoJSON.FeatureCollection,
+    options: DeriveTrainLineOptions = {
+        returnGeoJson: false,
         debugProperties: false
-    }) : TrainLine[] | FeatureCollection {
- 
+    }): TrainLine[] | FeatureCollection {
+
     const toFromCombinations: string[] = []
-    
+
     const trainLines: Feature<LineString>[] = geoJson.features
-        .filter(geoJson => 
-                geoJson.geometry.type === "LineString" ||
-                geoJson.geometry.type === "MultiLineString")
+        // only get the actual lines
+        .filter(geoJson =>
+            geoJson.geometry.type === "LineString" ||
+            geoJson.geometry.type === "MultiLineString")
         .flatMap(geoJson => {
             const properties = geoJson.properties as OSMTrainProperties
             const desintionTo = properties["to"]
@@ -37,12 +38,12 @@ function deriveTrainLinesFromGeoJson(
             const fromToCombo = `${desintionFrom}<->${desintionTo}`
 
             const existingCombination = toFromCombinations.find((combo) => {
-                return combo === toFromCombo 
+                return combo === toFromCombo
                     || combo === fromToCombo
             })
 
-            if(existingCombination) {
-                // console.log("Combo already exists!", existingCombination)
+            if (existingCombination) {
+                console.log("Combo already exists!", existingCombination)
                 return []
             }
 
@@ -50,7 +51,7 @@ function deriveTrainLinesFromGeoJson(
 
             const routeName = routeToLineMap[toFromCombo] ?? routeToLineMap[fromToCombo]
 
-            if(!routeName) {
+            if (!routeName) {
                 return []
             }
 
@@ -58,11 +59,11 @@ function deriveTrainLinesFromGeoJson(
                 name: routeName
             }
 
-            if(options.debugProperties) {
+            if (options.debugProperties) {
                 geoJson.properties["derivedFrom"] = toFromCombo
                 geoJson.properties["stroke-width"] = 5
                 geoJson.properties["stroke-opacity"] = .5
-                geoJson.properties["stroke"] = '#'+(Math.random()*0xFFFFFF<<0).toString(16);
+                geoJson.properties["stroke"] = '#' + (Math.random() * 0xFFFFFF << 0).toString(16);
             }
 
             return geoJson
@@ -83,6 +84,7 @@ function deriveTrainLinesFromGeoJson(
                 lineString = createLineString(longestLine)
             }
 
+            // edit in place
             simplify(lineString, {
                 highQuality: true,
                 tolerance: 0.00007,
@@ -91,17 +93,17 @@ function deriveTrainLinesFromGeoJson(
 
             const properties = geoJson.properties
 
-            if(!("name" in properties!) || !properties["name"]) {
+            if (!("name" in properties!) || !properties["name"]) {
                 console.error(`${JSON.stringify(properties)} is undefined, it might be missing from the route map`)
             }
-            
+
             lineString.properties = properties
 
             return lineString
         })
         .filter(geoJson => geoJson !== null)
-    
-    if(options.returnGeoJson) {
+
+    if (options.returnGeoJson) {
         return createFeatureCollection(trainLines)
     }
 

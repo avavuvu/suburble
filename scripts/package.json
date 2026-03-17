@@ -9,6 +9,7 @@
     "typescript": "^5.0.0"
   },
   "dependencies": {
+    "suburble-shared": "workspace:*",
     "@imagemagick/magick-wasm": "^0.0.34",
     "@std/csv": "npm:@jsr/std__csv",
     "@turf/turf": "^7.2.0",

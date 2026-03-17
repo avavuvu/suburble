@@ -1,0 +1,9 @@
+{
+  "name": "fun-suburble",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "scripts",
+    "site"
+  ]
+}

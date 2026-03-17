@@ -4,6 +4,8 @@ import type { TrainLineName } from "../types/trainLine"
 function getTrainLineOverlap(targetTrainLines: TrainLineName[], currentTrainLines: TrainLineName[]): Overlap {
     const overlap = currentTrainLines.filter(trainLine => targetTrainLines.includes(trainLine))
 
+    console.log(targetTrainLines, currentTrainLines)
+
     const trainLines = new Map<TrainLineName, GoodnessColor>(currentTrainLines.map((trainLine) => {
         if (targetTrainLines.includes(trainLine)) {
             return [trainLine, "green"]

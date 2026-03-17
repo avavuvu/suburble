@@ -30,6 +30,11 @@ button {
     color: var(--color-white);
 }
 
+.red {
+    background-color: var(--color-red-400);
+    color: var(--color-white);
+}
+
 .yellow {
     background-color: var(--color-yellow)
 }

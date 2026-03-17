@@ -9,10 +9,13 @@
         AttributionControl,
     } from "svelte-maplibre-gl";
     import mapLibreStyleJson from "../style/maplibre_style.json";
-    import { SvelteMap } from "svelte/reactivity";
-    import { trainLines, type TrainLineName } from "@t/trainLine";
-    import type { GoodnessColor } from "@t/feed";
     import gameManager from "@lib/gameManager.svelte.ts";
+
+    let {
+        mapLoaded,
+    }: {
+        mapLoaded: () => void;
+    } = $props();
 
     const mapLibreStyle = mapLibreStyleJson as unknown as StyleSpecification;
 
@@ -20,6 +23,8 @@
     let map: maplibregl.Map | undefined = $state(undefined);
 
     $effect(() => {
+        (map as maplibregl.Map).on("load", () => mapLoaded());
+
         gameManager.mapManager.map = map;
         map!.touchZoomRotate.disableRotation();
     });
@@ -77,7 +82,7 @@
                 }}
             ></FillLayer>
 
-            <Marker lnglat={suburb.centroid}>
+            <Marker lnglat={[suburb.centroid[0], suburb.centroid[1]]}>
                 {#snippet content()}
                     <div class="flex justify-center flex-col items-center">
                         <div

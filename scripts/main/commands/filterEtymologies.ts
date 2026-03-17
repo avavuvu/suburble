@@ -3,23 +3,23 @@ import type { Suburb } from "../types/suburbTypes"
 
 
 async function filterEtymologies(suburbs: Suburb[], options: { save: boolean }) {
-    const csvFile = Bun.file("./csv/etymologies.csv")
+    const csvFile = Bun.file("./scripts/csv/etymologies.csv")
     const csvText = await csvFile.text()
 
-    const columns = ["PFI","LOCALITY","GAZLOC","VICNAMESID","PFI_CR","UFI","UFI_CR","UFI_OLD","NAMESAKE","BROAD_CATEGORY1","LANGUAGE","DETAILS"]
+    const columns = ["PFI", "LOCALITY", "GAZLOC", "VICNAMESID", "PFI_CR", "UFI", "UFI_CR", "UFI_OLD", "NAMESAKE", "BROAD_CATEGORY1", "LANGUAGE", "DETAILS"]
     const etymologyData = csv.parse(csvText, {
         columns
     })
 
-    const etymologies: {[name: string]: { language: string, description: string }} = {}
+    const etymologies: { [name: string]: { language: string, description: string } } = {}
 
-    for(const suburb of suburbs) {
+    for (const suburb of suburbs) {
         const etymology = etymologyData
-            .find(({GAZLOC: gazetteLocality, LOCALITY: locality}) => 
-                locality.toLowerCase() === suburb.name.toLowerCase() 
+            .find(({ GAZLOC: gazetteLocality, LOCALITY: locality }) =>
+                locality.toLowerCase() === suburb.name.toLowerCase()
                 || gazetteLocality.toLowerCase() === suburb.name.toLowerCase())
 
-        if(!etymology) {
+        if (!etymology) {
             console.warn(suburb.name, "No etymology found!")
 
             continue
@@ -31,8 +31,8 @@ async function filterEtymologies(suburbs: Suburb[], options: { save: boolean }) 
         }
     }
 
-    if(options.save) {
-        await Bun.write(`./output/etymologies.json`, JSON.stringify(etymologies))
+    if (options.save) {
+        await Bun.write(`./scripts/output/etymologies.json`, JSON.stringify(etymologies))
     }
 
     return etymologies

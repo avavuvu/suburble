@@ -12,6 +12,7 @@ export default defineConfig({
   }),
   output: 'static',
   vite: {
+    // @ts-expect-error
     plugins: [tailwindcss()],
   },
   env: {

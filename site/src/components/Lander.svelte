@@ -1,13 +1,29 @@
 <script lang="ts">
-    import type { Snippet } from "svelte";
     import Marquee from "./Marquee.svelte";
-    import { streakManager } from "@lib/streakManager";
+    import { saveManager } from "@lib/saveManager";
+    import { onMount } from "svelte";
 
     const getStreak = async () => {
-        return await streakManager.getStreak();
+        return await saveManager.getStreak();
     };
 
-    const { children }: { children: Snippet } = $props();
+    let { dateKey }: { dateKey: string } = $props();
+
+    let buttonText = $state("Play");
+    let buttonSubText = $state("Daily");
+
+    onMount(() => {
+        const progress = saveManager.getGameProgress(dateKey);
+        if (progress) {
+            if (progress.isFinished) {
+                buttonText = "Admire";
+                buttonSubText = "Puzzle";
+            } else {
+                buttonText = "Resume";
+                buttonSubText = "Game";
+            }
+        }
+    });
 </script>
 
 <div class="sticky top-0">
@@ -88,7 +104,24 @@
             {/await}
         </div>
 
-        {@render children()}
+        <a
+            href="/game"
+            class="block group cursor-pointer bg-gray border rounded-xl w-[230px] lg:w-[400px] mt-4"
+        >
+            <h1 class="text-center underline text-3xl">
+                <span class="font-bold"> {buttonText} </span>
+                <span> {buttonSubText} </span>
+            </h1>
+            <div
+                class="aspect-square overflow-clip bg-white border m-2 rounded"
+            >
+                <img
+                    class="group-hover:scale-105 transition-transform"
+                    alt=""
+                    src="/assets/map.svg"
+                />
+            </div>
+        </a>
     </div>
 
     <div class="border-t my-4 border-black"></div>

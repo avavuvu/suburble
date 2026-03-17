@@ -1,11 +1,12 @@
 import type { Feature, LineString } from "geojson"
-import type { TrainLine, TrainLineName } from "../types/trainTypes"
-import { 
+import {
     lineString as createLineString,
     center as findCenter,
     bearing as findBearing,
-    lineSplit} from "@turf/turf"
+    lineSplit
+} from "@turf/turf"
 import flindersStSplitter from "../consts/flindersStSplit"
+import type { TrainLine, TrainLineName } from "suburble-shared"
 
 
 function splitAtFlindersSt(trainLines: TrainLine[], override: {
@@ -15,7 +16,7 @@ function splitAtFlindersSt(trainLines: TrainLine[], override: {
     name: TrainLineName
 }): TrainLine[] {
     const flindersStCenter = findCenter(flindersStSplitter)
-   
+
     // for the case of frankston:
     // werribee, altona loop, and williamstown all become frankston
     // so we only need to keep one copy of frankston
@@ -23,7 +24,7 @@ function splitAtFlindersSt(trainLines: TrainLine[], override: {
 
     return trainLines.flatMap((trainLine) => {
         const lineString = createLineString(trainLine.coordinates)
-        
+
         const splitLines = lineSplit(
             lineString as Feature<LineString>,
             flindersStSplitter
@@ -36,12 +37,12 @@ function splitAtFlindersSt(trainLines: TrainLine[], override: {
                 const angle = findBearing(center, flindersStCenter)
 
                 let newTrainLineName: TrainLineName;
-                
-                if((angle <= 0 && override.direction === "east")
+
+                if ((angle <= 0 && override.direction === "east")
                     || (angle >= 0 && override.direction === "west")) {
                     newTrainLineName = override.name
 
-                    if(hasOverridden) {
+                    if (hasOverridden) {
                         return null
                     }
 
@@ -53,8 +54,10 @@ function splitAtFlindersSt(trainLines: TrainLine[], override: {
 
                 return {
                     coordinates: lineString.geometry.coordinates,
-                    name: newTrainLineName
-                }})
+                    name: newTrainLineName,
+                    color: trainLine.color
+                }
+            })
             .filter(trainLineOrNull => trainLineOrNull !== null)
     })
 }

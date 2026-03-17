@@ -34,9 +34,11 @@ class FeedManager {
         this.feed.unshift(keyedFeedItem);
     }
 
-    addIncorrectGuess(guess: IncorrectGuess) {
+
+    addIncorrectGuess(guess: IncorrectGuess, isLastGuess: boolean) {
         const feedItem: FeedGuess = {
             type: "guess",
+            isLastGuess,
             guess,
             guessComponentsGoodness: this.getGuessComponentGoodness(guess.directionInfo),
             overlap: getTrainLineOverlap(

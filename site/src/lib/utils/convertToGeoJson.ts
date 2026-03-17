@@ -1,7 +1,7 @@
-import type { Coordinate } from "../types/geoJson"
+import type { Position } from "geojson"
 
 
-export const convertCoordinatesToGeoJsonPolygon = (coordinates: Coordinate[][], properties?: Object): GeoJSON.Feature => {
+export const convertCoordinatesToGeoJsonPolygon = (coordinates: Position[][], properties?: Object): GeoJSON.Feature => {
     return {
         type: "Feature",
         geometry: {

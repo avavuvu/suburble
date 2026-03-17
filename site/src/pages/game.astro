@@ -18,10 +18,12 @@ const { year, month, day } = Object.fromEntries(
 const dateKey = `${year}-${month}-${day}` as keyof typeof dates;
 
 const suburbName = dates[dateKey];
+// const suburbName = "Deer Park";
+// ^ debug
 
-const suburb = suburbJson.find(
-    (suburb) => suburb.name === suburbName,
-)! as Suburb;
+const suburb =
+    (suburbJson.find((suburb) => suburb.name === suburbName) as Suburb) ||
+    suburbJson[0]; // fallback
 ---
 
 <GameLayout title="Play Suburble">

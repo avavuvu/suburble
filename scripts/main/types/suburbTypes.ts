@@ -1,6 +1,6 @@
-import type { Point, Position } from "geojson";
-import type { TrainLineName } from "./trainTypes";
-import type { Cardinal } from "./directionTypes";
+import type { Position } from "geojson";
+import type { TrainLineName } from "suburble-shared";
+import type { Cardinal } from "suburble-shared";
 
 export type Suburb = {
     name: string,
@@ -26,4 +26,3 @@ export type OSMSuburbPropertiwes = {
     "wikidata": string,
     "wikipedia": string
 }
-

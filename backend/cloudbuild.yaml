@@ -1,5 +1,0 @@
-steps:
-  - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'australia-southeast2-docker.pkg.dev/suburble-457307/suburble/suburble-backend:$BUILD_ID', '.']
-  - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', 'australia-southeast2-docker.pkg.dev/suburble-457307/suburble/suburble-backend:$BUILD_ID']

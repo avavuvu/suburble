@@ -1,15 +1,9 @@
 import type { Position } from "geojson";
+import type { TrainLineName } from "suburble-shared";
 
-export const metroLines = [
-    "Mernda", "Hurstbridge",                            // red
-    "Sunbury", "Craigieburn", "Upfield",                // yellow
-    "Lilydale","Belgrave","Glen Waverley","Alamein",    // blue
-    "Pakenham","Cranbourne",                            // light blue
-    "Sandringham",                                      // pink
-    "Frankston","Williamstown","Werribee","Altona Loop" // green
-] as const
-
-export type TrainLineName = typeof metroLines[number];
+// Re-export from shared package - this is the single source of truth
+export { metroLines } from "suburble-shared"
+export type { TrainLineName } from "suburble-shared"
 
 export type OSMTrainProperties = {
     "@id": string,

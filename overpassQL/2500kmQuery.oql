@@ -1,0 +1,11 @@
+[out:json][timeout:25];
+{{geocodeArea:Melbourne}}->.searchArea;
+(
+  way["railway"="rail"]["electrified"="contact_line"](area.searchArea);
+  way["railway"="rail"]["name"="Warrnambool Line"](area.searchArea);
+  way["railway"="rail"]["name"="Ararat / Maryborough Line"](area.searchArea);
+  way["railway"="rail"]["name"="Warrnambool / Ararat / Maryborough Line"](area.searchArea);
+)->.trains;
+node(w.trains)->.trainNodes;
+relation(around.trainNodes:5000)["ref:psma:loc_pid"];
+out geom;

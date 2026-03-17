@@ -1,6 +1,7 @@
-import type { Cardinal, Coordinate } from "../types/geoJson"
+import type { Cardinal } from "../types/geoJson"
 import bearing from "@turf/bearing"
 import distance from "@turf/distance"
+import type { Position } from "geojson"
 
 export type DirectionInfo = {
     cardinalToTarget: Cardinal,
@@ -12,7 +13,7 @@ export type DirectionInfo = {
     }
 }
 
-function getDirectionInformation(start: Coordinate, target: Coordinate): DirectionInfo {
+function getDirectionInformation(start: Position, target: Position): DirectionInfo {
 
     const distanceToTarget = distance(
         start,

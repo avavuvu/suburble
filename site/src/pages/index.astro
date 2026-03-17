@@ -1,27 +1,21 @@
 ---
 import GameLayout from "../layouts/GameLayout.astro";
 import Lander from "@/Lander.svelte";
+import { dates } from "@j/dates.json";
+
+const parts = new Intl.DateTimeFormat("en-AU", {
+    timeZone: "Australia/Melbourne",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+}).formatToParts();
+
+const { year, month, day } = Object.fromEntries(
+    parts.map((p) => [p.type, p.value]),
+);
+const dateKey = `${year}-${month}-${day}` as keyof typeof dates;
 ---
 
 <GameLayout title="Suburble - The Daily Melbourne Suburb Guessing Game">
-    <Lander client:load>
-        <a
-            href="/game"
-            class="block group cursor-pointer bg-gray border rounded-xl w-[230px] lg:w-[400px]"
-        >
-            <h1 class="text-center underline text-3xl">
-                <span class="font-bold"> Play </span>
-                <span> Daily </span>
-            </h1>
-            <div
-                class="aspect-square overflow-clip bg-white border m-2 rounded"
-            >
-                <img
-                    class="group-hover:scale-105 transition-transform"
-                    alt=""
-                    src="/assets/map.svg"
-                />
-            </div>
-        </a>
-    </Lander>
+    <Lander dateKey={dateKey} client:load />
 </GameLayout>

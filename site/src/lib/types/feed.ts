@@ -22,6 +22,7 @@ export type FeedGuess = {
     guess: IncorrectGuess
     guessComponentsGoodness: Record<keyof DirectionInfo, GoodnessColor>
     overlap: Overlap
+    isLastGuess: boolean
 }
 
 export type FeedClue = {

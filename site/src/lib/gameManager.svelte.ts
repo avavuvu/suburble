@@ -10,7 +10,7 @@ import { ClueManager } from "./clueManager.svelte.ts"
 import MapManager from "./mapManager.svelte.ts"
 import type { FactSheet } from "./types/faceSheet"
 import confetti from "canvas-confetti"
-import { streakManager } from "./streakManager"
+import { saveManager } from "./saveManager"
 
 export type GameInstance = {
     targetSuburb: Suburb,
@@ -27,6 +27,7 @@ class GameManager {
     hasImage: boolean = false
     expanded: boolean = $state(false)
     gameEnded: boolean = $state(false)
+    isRestoring: boolean = false
 
     get bestGuess() {
         return Array.from(this.guesses.values()).reduce<IncorrectGuess | undefined>((bestGuess, currentGuess) => {
@@ -52,6 +53,17 @@ class GameManager {
         this.clueManager = new ClueManager(targetSuburb)
         this.mapManager = new MapManager(targetSuburb.trainLines)
 
+        // Restore game progress if it exists
+        const progress = saveManager.getGameProgress(this.gameInstance.dateKey)
+        if (progress) {
+            this.isRestoring = true
+            for (const guess of progress.guesses) {
+                await this.attemptGuess(guess)
+            }
+            this.isRestoring = false
+        }
+
+        return progress
     }
 
     addGuess(suburb: Suburb) {
@@ -65,7 +77,12 @@ class GameManager {
         const directionInfo = getDirectionInformation(suburb.centroid, this.gameInstance.targetSuburb.centroid)
         const newGuess: Guess = { type: "incorrect", directionInfo, suburb }
 
-        feedManager.addIncorrectGuess(newGuess)
+        this.guesses.set(SuburbCache.normalizeSuburbName(suburb.name), newGuess)
+        this.mapManager.addGuess(newGuess)
+
+        const isLastGuess = this.guesses.size === this.maxGuesses
+
+        feedManager.addIncorrectGuess(newGuess, isLastGuess)
 
         const clueTriggers = [1, 3, 5, 6]
         if (clueTriggers.includes(this.guesses.size)) {
@@ -73,7 +90,7 @@ class GameManager {
             if (clue) this.clueManager.loadClue(clue.clue)
         }
 
-        if (this.guesses.size === this.maxGuesses) {
+        if (isLastGuess) {
             this.endGame(false)
             return
         }
@@ -86,8 +103,13 @@ class GameManager {
             shake: false
         })
 
-        this.guesses.set(SuburbCache.normalizeSuburbName(suburb.name), newGuess)
-        this.mapManager.addGuess(newGuess)
+        if (!this.isRestoring) {
+            saveManager.saveGameProgress(
+                this.gameInstance.dateKey,
+                Array.from(this.guesses.keys()),
+                false
+            )
+        }
     }
 
     async attemptGuess(suburbName: string): Promise<boolean> {
@@ -129,7 +151,7 @@ class GameManager {
         this.expanded = true
         this.gameEnded = true
 
-        if (didWin) {
+        if (didWin && !this.isRestoring) {
             confetti({
                 scalar: 1.5
             })
@@ -161,11 +183,23 @@ class GameManager {
             revealData
         )
 
-        streakManager.addGame(
+        saveManager.addGame(
             this.gameInstance,
             revealData
         )
 
+        if (!this.isRestoring) {
+            const finalGuessesToSave = Array.from(this.guesses.keys())
+            if (didWin) {
+                finalGuessesToSave.push(SuburbCache.normalizeSuburbName(this.gameInstance.targetSuburb.name))
+            }
+
+            saveManager.saveGameProgress(
+                this.gameInstance.dateKey,
+                finalGuessesToSave,
+                true
+            )
+        }
     }
 }
 

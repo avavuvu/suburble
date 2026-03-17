@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { SuburbCache, suburbCache } from "@lib/suburbCache";
+    import { SuburbCache } from "@lib/suburbCache";
     import suburbQuery from "@lib/suburbQuery";
     import gameManager from "@lib/gameManager.svelte.ts";
     import Feed from "./Feed.svelte";
@@ -25,6 +25,9 @@
 
     let open = $state(true);
 
+    // wait for map to load before letting the user play
+    let disabled = $state(true);
+
     suburbQuery.init(suburbNames);
 
     let error: {
@@ -49,15 +52,17 @@
 
             // otherwise
 
-            await gameManager.init(suburb, date);
+            const _progress = await gameManager.init(suburb, date);
         } catch (e) {
             error.error = true;
+            // Hide the start dialog when theres an error
+            disabled = false;
             error.reason = String(e);
         }
     }
 </script>
 
-<StartDialog bind:open></StartDialog>
+<StartDialog bind:open bind:disabled></StartDialog>
 
 {#if !error.error}
     <main class="">
@@ -66,7 +71,7 @@
         {:then _}
             <div class="relative game" class:expanded={gameManager.expanded}>
                 <div id="map" class="h-[calc(100%-15vh)]">
-                    <Map />
+                    <Map mapLoaded={() => (disabled = false)} />
                 </div>
 
                 <div id="feed" class="absolute bottom-[15vh] left-0 right-0">
