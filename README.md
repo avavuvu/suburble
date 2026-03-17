@@ -1,11 +1,9 @@
-## backend
+# Suburble
 
-i want to move this to astro
+Daily Melbourne guessing game
 
-set gcloud project to suburble-457307
-```gcloud config set project suburble-457307```
+play name at <https://suburble.melbourne>
 
-build
-```gcloud builds submit --config cloudbuild.yaml .```
+#### WARNING
 
-then update config in google cloud run
+_This repo contains dates.json, which has every future suburb currently scheduled. If you do not want spoilers, please do not look at that file._
