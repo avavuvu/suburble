@@ -19,7 +19,7 @@
         if (isLast) {
             setTimeout(() => {
                 scroll();
-            }, 50);
+            }, 100);
         }
     });
 

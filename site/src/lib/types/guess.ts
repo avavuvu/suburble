@@ -27,8 +27,9 @@ export type RevealData = {
         histogram: {
             [k: string]: number;
         },
-        averageGuess: {
-            count: string
+        meta: {
+            count: string,
+            max: string
         }
     }>
 }

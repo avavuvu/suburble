@@ -90,7 +90,7 @@
         <div class="p-2 rounded col-span-2 border h-36">
             {#await feedItem.revealData.histogramPromise}
                 <div class="text-center text-gray-500 text-sm">
-                    Loading global scores...
+                    Loading average scores...
                 </div>
             {:then data}
                 {#if data.histogram}
@@ -107,10 +107,12 @@
                                         style="height: {Math.max(
                                             5,
                                             (Number(data.histogram[adjusted]) /
-                                                6) *
+                                                Number(data.meta.max)) *
                                                 100,
                                         )}%;"
-                                    ></div>
+                                    >
+                                        {adjusted === guesses ? "You!" : ""}
+                                    </div>
                                 {/if}
                                 <div class="w-full font-semibold">
                                     {adjusted === 6 ? "☠️" : adjusted}

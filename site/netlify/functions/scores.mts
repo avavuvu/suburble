@@ -1,7 +1,7 @@
 import type { Config, Context } from "@netlify/functions";
 import { db } from "../../db";
 import { scores } from "../../db/schema";
-import { eq, avg, count } from "drizzle-orm";
+import { eq, avg, count, max } from "drizzle-orm";
 
 export default async function (req: Request, context: Context): Promise<Response> {
     const { date, guesses } = context.params;
@@ -26,8 +26,8 @@ export default async function (req: Request, context: Context): Promise<Response
         .groupBy(scores.guesses)
         .orderBy(scores.guesses);
 
-    const [averageGuess] = await db
-        .select({ count: avg(scores.guesses) })
+    const [meta] = await db
+        .select({ count: avg(scores.guesses), max: max(scores.guesses) })
         .from(scores)
         .where(eq(scores.date, date));
 
@@ -35,7 +35,7 @@ export default async function (req: Request, context: Context): Promise<Response
         stats.map((row) => [row.guesses, Number(row.players)])
     );
 
-    return Response.json({ success: true, histogram, averageGuess }, { status: 201 });
+    return Response.json({ success: true, histogram, meta }, { status: 201 });
 };
 
 export const config: Config = {
