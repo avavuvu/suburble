@@ -16,8 +16,8 @@ export default defineConfig({
     plugins: [tailwindcss()],
   },
   env: {
+    validateSecrets: true,
     schema: {
-      PUBLIC_MIXPANEL_TOKEN: envField.string({ context: 'client', access: 'public', optional: true }),
       BUILD_HOOK_URL: envField.string({ context: 'server', access: 'secret', optional: false }),
     }
   },
