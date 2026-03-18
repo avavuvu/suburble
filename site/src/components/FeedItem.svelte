@@ -2,24 +2,42 @@
     import type { FeedItem } from "@t/feed";
     import { slide } from "svelte/transition";
     import TrainLineDisplay from "./TrainLineDisplay.svelte";
-    import { onMount } from "svelte";
+    import { onMount, tick } from "svelte";
     import Reveal from "./Reveal.svelte";
 
     const {
         feedItem,
         scrollToBottom,
+        isLast,
     }: {
         feedItem: FeedItem;
         scrollToBottom: () => void;
+        isLast: boolean;
     } = $props();
 
-    onMount(() => scrollToBottom());
+    onMount(() => {
+        if (isLast) {
+            setTimeout(() => {
+                scroll();
+            }, 50);
+        }
+    });
+
+    const scroll = () => {
+        feedElement.scrollIntoView({
+            behavior: "smooth",
+            block: "start",
+        });
+    };
+
+    let feedElement: HTMLElement = $state(null!);
 
     const animateInTimeMs = 400 as const;
 </script>
 
 <li
     transition:slide
+    bind:this={feedElement}
     class:shake={feedItem.type === "guess" && feedItem.isLastGuess}
     class="rounded border bg-white border-black overflow-clip p-1 my-2 shrink-0"
 >

@@ -22,4 +22,13 @@ export type RevealData = {
 
     bestGuess?: IncorrectGuess
     guesses: number
+
+    histogramPromise?: Promise<{
+        histogram: {
+            [k: string]: number;
+        },
+        averageGuess: {
+            count: string
+        }
+    }>
 }

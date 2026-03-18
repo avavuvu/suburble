@@ -23,7 +23,11 @@
         class=" overflow-y-auto flex flex-col-reverse gap-4 pb-8 lg:gap-2 w-[90%] max-w-[600px] mx-auto pt-1"
     >
         {#each feedManager.feed as feedItem (feedItem.key)}
-            <FeedItem {feedItem} {scrollToBottom} />
+            <FeedItem
+                {feedItem}
+                {scrollToBottom}
+                isLast={feedItem.key === feedManager.feed.length - 1}
+            />
         {/each}
     </ul>
 </div>

@@ -66,7 +66,7 @@ class GameManager {
         return progress
     }
 
-    addGuess(suburb: Suburb) {
+    async addGuess(suburb: Suburb) {
         const isCorrect = suburb.name === this.gameInstance.targetSuburb.name
 
         if (isCorrect) {
@@ -171,10 +171,19 @@ class GameManager {
             }
         })
 
+        let histogramPromise: Promise<any> | undefined;
+
+        if (!this.isRestoring) {
+            histogramPromise = fetch(`/scores/${this.gameInstance.dateKey}/${this.guesses.size + 1}`, {
+                method: "POST",
+            }).then(res => res.json());
+        }
+
         const revealData: RevealData = {
             didWin,
             bestGuess: this.bestGuess,
-            guesses: this.guesses.size
+            guesses: this.guesses.size,
+            histogramPromise
         }
 
         feedManager.addReveal(
