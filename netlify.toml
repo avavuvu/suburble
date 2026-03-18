@@ -1,5 +1,5 @@
 [build]
-  base = "/site"
+  base = "site"
   command = "bun run build"
   publish = "dist"
-  functions = "netlify/functions"
+  functions = "site/netlify/functions"
